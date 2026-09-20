@@ -9,4 +9,5 @@
 //
 // ============================================================
 
-const WEB3FORMS_ACCESS_KEY = "TU_ACCESS_KEY";
+// Configuración Web3Forms
+const WEB3FORMS_ACCESS_KEY = "aec0b1b0-d22a-4f29-85ac-01fd8c2622ed";
