@@ -1,43 +1,65 @@
+// ============================================================
+// FORMULARIO QR + WEB3FORMS
+// ============================================================
+
 const form = document.getElementById("contactForm");
-const accessKey = document.getElementById("accessKey");
 const status = document.getElementById("status");
 const submitBtn = document.getElementById("submitBtn");
 
-accessKey.value = WEB3FORMS_ACCESS_KEY;
+// Access Key directamente configurada
+const WEB3FORMS_ACCESS_KEY =
+    "aec0b1b0-d22a-4f29-85ac-01fd8c2622ed";
 
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
+form.addEventListener("submit", async function (event) {
 
-  if (WEB3FORMS_ACCESS_KEY === "TU_ACCESS_KEY") {
-    status.textContent = "Falta configurar el Access Key de Web3Forms.";
-    return;
-  }
+    event.preventDefault();
 
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Enviando...";
-  status.textContent = "";
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Enviando...";
+    status.textContent = "";
 
-  const formData = new FormData(form);
+    const formData = new FormData(form);
 
-  try {
-    const response = await fetch(form.action, {
-      method: "POST",
-      body: formData
-    });
+    // Agregar Access Key directamente
+    formData.set("access_key", WEB3FORMS_ACCESS_KEY);
 
-    const result = await response.json();
+    try {
 
-    if (result.success) {
-      window.location.href = "./gracias.html";
-      return;
+        const response = await fetch(
+            "https://api.web3forms.com/submit",
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+        const result = await response.json();
+
+        console.log("Respuesta Web3Forms:", result);
+
+        if (result.success) {
+
+            window.location.href = "./gracias.html";
+
+        } else {
+
+            status.textContent =
+                result.message ||
+                "No se pudo enviar el mensaje.";
+
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Enviar mensaje";
+        }
+
+    } catch (error) {
+
+        console.error("Error:", error);
+
+        status.textContent =
+            "No se pudo conectar con Web3Forms.";
+
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Enviar mensaje";
     }
 
-    throw new Error(result.message || "Error al enviar");
-  } catch (error) {
-    console.error(error);
-    status.textContent =
-      "No se pudo enviar el mensaje. Revisa la configuración e inténtalo nuevamente.";
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Enviar mensaje";
-  }
 });
