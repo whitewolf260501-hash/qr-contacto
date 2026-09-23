@@ -10,106 +10,173 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <meta
-        name="description"
-        content="Escáner QR para identificar piso y sector"
-    >
+    <title>Escanear QR</title>
 
-    <title>Escanear ubicación</title>
-
-    <link
-        rel="stylesheet"
-        href="./css/styles.css"
-    >
-
-    <!-- Librería para escanear QR -->
     <script src="https://unpkg.com/html5-qrcode"></script>
 
     <style>
 
-        .scanner-page {
-            max-width: 520px;
-            margin: 20px auto;
-            padding: 15px;
-        }
-
-        .scanner-card {
-            background: #ffffff;
-            border-radius: 18px;
-            padding: 24px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.10);
-        }
-
-        .scanner-title {
-            text-align: center;
-            margin: 0 0 10px;
-        }
-
-        .scanner-description {
-            text-align: center;
-            color: #666;
-            line-height: 1.5;
-            margin-bottom: 20px;
-        }
-
-        #reader {
-            width: 100%;
-            overflow: hidden;
-            border-radius: 14px;
-        }
-
-        #reader video {
-            border-radius: 14px;
-        }
-
-        .scanner-result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            background: #eef6ff;
-            color: #1e40af;
-            text-align: center;
-            display: none;
-            font-weight: bold;
-        }
-
-        .scanner-button {
-            display: block;
-            width: 100%;
-            margin-top: 15px;
-            padding: 14px;
-            border: none;
-            border-radius: 10px;
-            background: #2563eb;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            text-decoration: none;
-            text-align: center;
+        * {
             box-sizing: border-box;
         }
 
-        .location-preview {
-            display: none;
-            margin-top: 15px;
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background:
+                #f4f6f8;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            padding: 20px;
+        }
+
+        .contenedor {
+
+            width: 100%;
+            max-width: 500px;
+
+            background: white;
+
+            border-radius: 20px;
+
+            padding: 25px;
+
+            box-shadow:
+                0 8px 30px rgba(0,0,0,0.12);
+
+            text-align: center;
+        }
+
+        h1 {
+
+            margin-top: 0;
+
+            color: #222;
+
+        }
+
+        .descripcion {
+
+            color: #666;
+
+            margin-bottom: 20px;
+
+            line-height: 1.5;
+        }
+
+        #reader {
+
+            width: 100%;
+
+            max-width: 420px;
+
+            margin: 0 auto;
+
+            overflow: hidden;
+
+            border-radius: 15px;
+
+        }
+
+        #estado {
+
+            margin-top: 20px;
+
             padding: 15px;
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
+
             border-radius: 10px;
-            text-align: center;
+
+            background: #f1f3f5;
+
+            color: #333;
+
+            line-height: 1.5;
+
         }
 
-        .location-preview strong {
-            display: block;
-            font-size: 18px;
-            margin-top: 5px;
+        #resultado {
+
+            display: none;
+
+            margin-top: 20px;
+
+            padding: 20px;
+
+            border-radius: 12px;
+
+            background: #e8f5e9;
+
+            color: #1b5e20;
         }
 
-        .camera-info {
+        #error {
+
+            display: none;
+
+            margin-top: 20px;
+
+            padding: 15px;
+
+            border-radius: 10px;
+
+            background: #ffebee;
+
+            color: #b71c1c;
+
+            text-align: left;
+
+            word-break: break-word;
+        }
+
+        .ubicacion {
+
+            font-size: 22px;
+
+            font-weight: bold;
+
+            margin: 10px 0;
+
+        }
+
+        button {
+
+            border: none;
+
+            border-radius: 10px;
+
+            padding: 14px 20px;
+
+            font-size: 16px;
+
+            cursor: pointer;
+
             margin-top: 15px;
-            text-align: center;
-            font-size: 13px;
-            color: #777;
+        }
+
+        .volver {
+
+            display: inline-block;
+
+            text-decoration: none;
+
+            color: white;
+
+            background: #333;
+
+            padding: 12px 20px;
+
+            border-radius: 10px;
+
+            margin-top: 15px;
         }
 
     </style>
@@ -120,340 +187,511 @@
 <body>
 
 
-<main class="scanner-page">
-
-    <section class="scanner-card">
+<div class="contenedor">
 
 
-        <h1 class="scanner-title">
-            📱 Escanear ubicación
-        </h1>
+    <h1>
+        📱 Escanear QR
+    </h1>
 
 
-        <p class="scanner-description">
+    <div class="descripcion">
 
-            Escanea el código QR correspondiente al
-            <strong>piso y sector</strong> donde te encuentras.
+        Apunta la cámara trasera hacia el código QR
+        correspondiente al piso y sector.
 
-        </p>
-
-
-        <!-- ESCÁNER -->
-
-        <div id="reader"></div>
+    </div>
 
 
-        <p class="camera-info">
-            📷 Se utilizará la cámara del teléfono para leer el QR.
-        </p>
+    <div id="reader"></div>
 
 
-        <!-- RESULTADO -->
+    <div id="estado">
 
-        <div
-            id="scannerResult"
-            class="scanner-result"
-        >
-            QR detectado correctamente.
+        Iniciando cámara...
+
+    </div>
+
+
+    <div id="resultado">
+
+        <div>
+            Ubicación detectada:
         </div>
 
-
-        <!-- UBICACIÓN -->
-
         <div
-            id="locationPreview"
-            class="location-preview"
-        >
+            id="ubicacion"
+            class="ubicacion"
+        ></div>
 
-            📍 Ubicación detectada
-
-            <strong id="locationText">
-                -
-            </strong>
-
+        <div>
+            Redirigiendo al formulario...
         </div>
 
-
-        <!-- VOLVER -->
-
-        <a
-            href="./index.html"
-            class="scanner-button"
-        >
-            ← Volver al registro
-        </a>
+    </div>
 
 
-    </section>
+    <div id="error"></div>
 
 
-</main>
+    <a
+        href="./index.html"
+        class="volver"
+    >
+        ← Volver
+    </a>
+
+
+</div>
 
 
 <script>
 
-    const scannerResult =
-        document.getElementById(
-            "scannerResult"
+
+// ============================================================
+// ELEMENTOS
+// ============================================================
+
+const estado =
+    document.getElementById("estado");
+
+const resultado =
+    document.getElementById("resultado");
+
+const errorBox =
+    document.getElementById("error");
+
+const ubicacion =
+    document.getElementById("ubicacion");
+
+
+// ============================================================
+// MOSTRAR ERROR
+// ============================================================
+
+function mostrarError(mensaje) {
+
+    estado.style.display = "none";
+
+    errorBox.style.display = "block";
+
+    errorBox.innerHTML =
+        "<strong>❌ No se pudo abrir la cámara.</strong><br><br>" +
+        mensaje;
+
+}
+
+
+// ============================================================
+// PROCESAR QR
+// ============================================================
+
+function procesarQR(texto) {
+
+    try {
+
+        console.log(
+            "QR detectado:",
+            texto
         );
 
-    const locationPreview =
-        document.getElementById(
-            "locationPreview"
-        );
 
-    const locationText =
-        document.getElementById(
-            "locationText"
-        );
+        let url;
 
 
-    let redirigiendo = false;
+        // ====================================================
+        // INTENTAR INTERPRETAR COMO URL
+        // ====================================================
 
+        try {
 
-    const scanner =
-        new Html5Qrcode("reader");
-
-
-    const config = {
-
-        fps: 10,
-
-        qrbox: {
-            width: 250,
-            height: 250
-        },
-
-        aspectRatio: 1
-
-    };
-
-
-    /*
-     * Abrimos la cámara trasera para escanear.
-     *
-     * Esto es correcto:
-     * - ESCANEAR QR → cámara trasera
-     * - TOMAR SELFIE → cámara frontal
-     */
-
-
-    scanner.start(
-
-        {
-            facingMode: {
-                ideal: "environment"
-            }
-        },
-
-        config,
-
-
-        async function(decodedText) {
-
-
-            if (redirigiendo) {
-                return;
-            }
-
-
-            redirigiendo = true;
-
-
-            let url;
-
-
-            try {
-
-                /*
-                 * Convertimos el texto leído
-                 * en una URL.
-                 */
-
-                if (
-                    decodedText.startsWith(
-                        "http://"
-                    ) ||
-                    decodedText.startsWith(
-                        "https://"
-                    )
-                ) {
-
-                    url =
-                        new URL(decodedText);
-
-                } else if (
-                    decodedText.startsWith("?")
-                ) {
-
-                    url =
-                        new URL(
-                            window.location.origin +
-                            window.location.pathname +
-                            decodedText
-                        );
-
-                } else if (
-                    /^\d+$/.test(
-                        decodedText.trim()
-                    )
-                ) {
-
-                    /*
-                     * Compatibilidad con QR
-                     * antiguos que solamente
-                     * contienen el número del piso.
-                     */
-
-                    url =
-                        new URL(
-                            window.location.origin +
-                            window.location.pathname
-                        );
-
-                    url.searchParams.set(
-                        "piso",
-                        decodedText.trim()
-                    );
-
-                } else {
-
-                    throw new Error(
-                        "QR no válido"
-                    );
-
-                }
-
-
-                const piso =
-                    url.searchParams.get(
-                        "piso"
-                    );
-
-                const sector =
-                    url.searchParams.get(
-                        "sector"
-                    );
-
-
-                /*
-                 * Exigimos piso y sector.
-                 */
-
-                if (
-                    !piso ||
-                    !sector
-                ) {
-
-                    throw new Error(
-                        "El QR no contiene piso y sector."
-                    );
-
-                }
-
-
-                /*
-                 * Mostrar ubicación.
-                 */
-
-                scannerResult.style.display =
-                    "block";
-
-                scannerResult.textContent =
-                    "✅ QR detectado correctamente";
-
-
-                locationPreview.style.display =
-                    "block";
-
-                locationText.textContent =
-                    "Piso " +
-                    piso +
-                    " - Sector " +
-                    sector;
-
-
-                /*
-                 * Detener cámara.
-                 */
-
-                try {
-
-                    await scanner.stop();
-
-                } catch (error) {
-
-                    console.log(error);
-
-                }
-
-
-                /*
-                 * Redirigir al formulario.
-                 *
-                 * El piso y sector quedan
-                 * incluidos en la URL.
-                 */
-
-                const destino =
-                    "./index.html?piso=" +
-                    encodeURIComponent(piso) +
-                    "&sector=" +
-                    encodeURIComponent(sector);
-
-
-                setTimeout(
-                    function() {
-
-                        window.location.href =
-                            destino;
-
-                    },
-                    700
+            url =
+                new URL(
+                    texto
                 );
 
+        } catch (e) {
 
-            } catch (error) {
-
-                console.error(error);
-
-
-                alert(
-                    "❌ Este QR no contiene una ubicación válida.\n\n" +
-                    "El QR debe identificar un piso y un sector."
-                );
-
-
-                redirigiendo = false;
-
-            }
-
-        },
-
-
-        function(errorMessage) {
-
-            /*
-             * Los errores de lectura
-             * normales se ignoran.
-             */
+            url = null;
 
         }
 
-    )
+
+        // ====================================================
+        // EXTRAER PISO Y SECTOR
+        // ====================================================
+
+        let piso = null;
+
+        let sector = null;
 
 
-    .catch(function(error) {
+        if (url) {
 
-        console.error(error);
+            piso =
+                url.searchParams.get(
+                    "piso"
+                );
+
+            sector =
+                url.searchParams.get(
+                    "sector"
+                );
+
+        }
 
 
-        alert(
-            "No se pudo abrir la cámara.\n\n" +
-            "Debes permitir el acceso a la cámara."
+        // ====================================================
+        // TAMBIÉN PERMITIR TEXTO:
+        //
+        // piso=3&sector=B
+        // ====================================================
+
+        if (!piso || !sector) {
+
+            const textoNormalizado =
+                texto.trim();
+
+
+            const parametros =
+                new URLSearchParams(
+                    textoNormalizado
+                );
+
+
+            piso =
+                parametros.get(
+                    "piso"
+                );
+
+            sector =
+                parametros.get(
+                    "sector"
+                );
+
+        }
+
+
+        // ====================================================
+        // VALIDAR
+        // ====================================================
+
+        if (!piso || !sector) {
+
+            mostrarError(
+                "El código QR no contiene un piso y un sector válidos.<br><br>" +
+                "QR leído:<br>" +
+                "<strong>" +
+                texto +
+                "</strong>"
+            );
+
+            return;
+
+        }
+
+
+        // ====================================================
+        // NORMALIZAR
+        // ====================================================
+
+        piso =
+            String(piso).trim();
+
+        sector =
+            String(sector)
+                .trim()
+                .toUpperCase();
+
+
+        // ====================================================
+        // MOSTRAR RESULTADO
+        // ====================================================
+
+        document.getElementById(
+            "reader"
+        ).style.display = "none";
+
+
+        estado.style.display =
+            "none";
+
+
+        resultado.style.display =
+            "block";
+
+
+        ubicacion.textContent =
+            "Piso " +
+            piso +
+            " - Sector " +
+            sector;
+
+
+        // ====================================================
+        // REDIRIGIR
+        // ====================================================
+
+        setTimeout(
+            function() {
+
+                window.location.href =
+                    "./index.html?piso=" +
+                    encodeURIComponent(
+                        piso
+                    ) +
+                    "&sector=" +
+                    encodeURIComponent(
+                        sector
+                    );
+
+            },
+            1000
         );
 
-    });
+
+    } catch (error) {
+
+        mostrarError(
+            "Error procesando el código QR:<br><br>" +
+            error.message
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// CONFIGURACIÓN DEL ESCÁNER
+// ============================================================
+
+const html5QrCode =
+    new Html5Qrcode(
+        "reader"
+    );
+
+
+// ============================================================
+// OPCIONES
+// ============================================================
+
+const config = {
+
+    fps: 10,
+
+    qrbox: {
+        width: 250,
+        height: 250
+    },
+
+    aspectRatio: 1.0
+
+};
+
+
+// ============================================================
+// INICIAR CÁMARA
+// ============================================================
+
+async function iniciarCamara() {
+
+    estado.textContent =
+        "Solicitando acceso a la cámara...";
+
+
+    try {
+
+        // ====================================================
+        // COMPROBAR SOPORTE
+        // ====================================================
+
+        if (
+            !navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia
+        ) {
+
+            throw new Error(
+                "Este navegador no permite acceder a la cámara desde esta página."
+            );
+
+        }
+
+
+        // ====================================================
+        // PEDIR PERMISO EXPLÍCITAMENTE
+        // ====================================================
+
+        estado.textContent =
+            "Solicitando permiso para utilizar la cámara...";
+
+
+        const stream =
+            await navigator.mediaDevices.getUserMedia({
+
+                video: {
+                    facingMode: {
+                        ideal: "environment"
+                    }
+                },
+
+                audio: false
+
+            });
+
+
+        // ====================================================
+        // PERMISO CONCEDIDO
+        // ====================================================
+
+        stream
+            .getTracks()
+            .forEach(
+                track => track.stop()
+            );
+
+
+        estado.textContent =
+            "Cámara autorizada. Iniciando lector QR...";
+
+
+        // ====================================================
+        // INICIAR HTML5 QR CODE
+        // ====================================================
+
+        await html5QrCode.start(
+
+            {
+                facingMode: {
+                    ideal: "environment"
+                }
+            },
+
+            config,
+
+            function(decodedText) {
+
+                procesarQR(
+                    decodedText
+                );
+
+            },
+
+            function(errorMessage) {
+
+                // No mostramos errores normales
+                // de búsqueda de QR.
+
+                console.log(
+                    "Buscando QR:",
+                    errorMessage
+                );
+
+            }
+
+        );
+
+
+        estado.textContent =
+            "📷 Cámara activa. Apunta al código QR.";
+
+
+    } catch (error) {
+
+        console.error(
+            "ERROR DE CÁMARA:",
+            error
+        );
+
+
+        let mensaje =
+            "Error desconocido.";
+
+
+        if (
+            error.name ===
+            "NotAllowedError"
+        ) {
+
+            mensaje =
+                "El navegador rechazó el acceso a la cámara. " +
+                "Aunque el permiso aparezca activado, intenta " +
+                "recargar la página y volver a permitir la cámara.";
+
+        }
+
+
+        else if (
+            error.name ===
+            "NotFoundError"
+        ) {
+
+            mensaje =
+                "No se encontró ninguna cámara disponible en el dispositivo.";
+
+        }
+
+
+        else if (
+            error.name ===
+            "NotReadableError"
+        ) {
+
+            mensaje =
+                "La cámara existe, pero otro programa o aplicación " +
+                "podría estar utilizándola. Cierra otras aplicaciones " +
+                "que estén usando la cámara y vuelve a intentarlo.";
+
+        }
+
+
+        else if (
+            error.name ===
+            "OverconstrainedError"
+        ) {
+
+            mensaje =
+                "El navegador no pudo seleccionar una cámara compatible. " +
+                "Se intentó utilizar la cámara trasera.";
+
+        }
+
+
+        else if (
+            error.name ===
+            "SecurityError"
+        ) {
+
+            mensaje =
+                "El navegador bloqueó el acceso a la cámara por razones de seguridad.";
+
+        }
+
+
+        else {
+
+            mensaje =
+                error.name +
+                ": " +
+                error.message;
+
+        }
+
+
+        mostrarError(
+            mensaje
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// INICIAR
+// ============================================================
+
+iniciarCamara();
 
 
 </script>
