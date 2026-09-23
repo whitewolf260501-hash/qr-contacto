@@ -1,178 +1,587 @@
-<<<<<<< HEAD
-const form=document.getElementById("visitForm");
-const piso=new URLSearchParams(location.search).get("piso")||"No identificado";
-const pisoLabel=document.getElementById("pisoLabel");
-const foto=document.getElementById("foto");
-const preview=document.getElementById("preview");
-const previewWrap=document.getElementById("previewWrap");
-const statusBox=document.getElementById("status");
-const sendBtn=document.getElementById("sendBtn");
-let tipo="";
+// ============================================================
+// REGISTRO DE VISITAS
+// CÁMARA + GPS + GOOGLE APPS SCRIPT
+// ============================================================
 
-pisoLabel.textContent=piso==="No identificado"?piso:`Piso ${piso}`;
+const piso =
+    new URLSearchParams(window.location.search).get("piso") || "No identificado";
 
-document.querySelectorAll(".staff").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    tipo=btn.dataset.tipo;
-    document.querySelectorAll(".staff").forEach(b=>b.classList.remove("selected"));
-    btn.classList.add("selected");
-  });
-});
+const pisoLabel = document.getElementById("pisoLabel");
 
-foto.addEventListener("change",()=>{
-  const file=foto.files[0];
-  if(!file){previewWrap.classList.add("hidden");return;}
-  preview.src=URL.createObjectURL(file);
-  previewWrap.classList.remove("hidden");
-});
-
-function comprimirImagen(file,maxWidth=1400,quality=.78){
-  return new Promise((resolve,reject)=>{
-    const reader=new FileReader();
-    reader.onload=()=>{
-      const img=new Image();
-      img.onload=()=>{
-        let w=img.width,h=img.height;
-        if(w>maxWidth){h=Math.round(h*maxWidth/w);w=maxWidth;}
-        const canvas=document.createElement("canvas");
-        canvas.width=w;canvas.height=h;
-        canvas.getContext("2d").drawImage(img,0,0,w,h);
-        canvas.toBlob(blob=>{
-          if(!blob)return reject(new Error("No se pudo procesar la fotografía."));
-          const r=new FileReader();
-          r.onload=()=>resolve({base64:r.result.split(",")[1],mime:blob.type});
-          r.onerror=reject;
-          r.readAsDataURL(blob);
-        },"image/jpeg",quality);
-      };
-      img.onerror=reject;
-      img.src=reader.result;
-    };
-    reader.onerror=reject;
-    reader.readAsDataURL(file);
-  });
+if (pisoLabel) {
+    pisoLabel.textContent = piso;
 }
 
-form.addEventListener("submit",async e=>{
-  e.preventDefault();
 
-  if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("PEGA_AQUI")){
-    statusBox.textContent="Falta configurar la URL de Google Apps Script.";
-    statusBox.className="status error";
-    return;
-  }
-  if(!tipo){
-    statusBox.textContent="Selecciona Mantención o Seguridad.";
-    statusBox.className="status error";
-    return;
-  }
-  if(!foto.files[0]){
-    statusBox.textContent="Debes tomar una fotografía.";
-    statusBox.className="status error";
-    return;
-  }
+// ============================================================
+// VARIABLES
+// ============================================================
 
-  sendBtn.disabled=true;
-  sendBtn.textContent="Enviando...";
-  statusBox.textContent="Preparando fotografía...";
-  statusBox.className="status loading";
+let tipoSeleccionado = "";
 
-  try{
-    const image=await comprimirImagen(foto.files[0]);
+let cameraStream = null;
 
-    const data=new URLSearchParams();
-    data.append("piso",piso);
-    data.append("tipo",tipo);
-    data.append("nombre",document.getElementById("nombre").value.trim());
-    data.append("correo",document.getElementById("correo").value.trim());
-    data.append("telefono",document.getElementById("telefono").value.trim());
-    data.append("mensaje",document.getElementById("mensaje").value.trim());
-    data.append("fotoBase64",image.base64);
-    data.append("fotoMime",image.mime);
-    data.append("fotoNombre",foto.files[0].name);
+let photoBlob = null;
 
-    statusBox.textContent="Enviando registro y fotografía...";
 
-    await fetch(APPS_SCRIPT_URL,{
-      method:"POST",
-      mode:"no-cors",
-      body:data
+// ============================================================
+// ELEMENTOS
+// ============================================================
+
+const visitForm = document.getElementById("visitForm");
+
+const openCameraBtn =
+    document.getElementById("openCameraBtn");
+
+const takePhotoBtn =
+    document.getElementById("takePhotoBtn");
+
+const retakePhotoBtn =
+    document.getElementById("retakePhotoBtn");
+
+const cameraContainer =
+    document.getElementById("cameraContainer");
+
+const camera =
+    document.getElementById("camera");
+
+const canvas =
+    document.getElementById("canvas");
+
+const previewWrap =
+    document.getElementById("previewWrap");
+
+const preview =
+    document.getElementById("preview");
+
+const locationBtn =
+    document.getElementById("locationBtn");
+
+const locationStatus =
+    document.getElementById("locationStatus");
+
+const sendBtn =
+    document.getElementById("sendBtn");
+
+const status =
+    document.getElementById("status");
+
+
+// ============================================================
+// SELECCIÓN MANTENCIÓN / SEGURIDAD
+// ============================================================
+
+document.querySelectorAll(".staff").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        document.querySelectorAll(".staff").forEach(btn => {
+            btn.classList.remove("selected");
+        });
+
+        button.classList.add("selected");
+
+        tipoSeleccionado =
+            button.dataset.tipo;
+
+        document.getElementById("tipo").value =
+            tipoSeleccionado;
+
     });
 
-    // no-cors no permite leer la respuesta, pero la solicitud se envía.
-    location.href="./gracias.html";
-  }catch(error){
-    console.error(error);
-    statusBox.textContent="No se pudo enviar el registro. Inténtalo nuevamente.";
-    statusBox.className="status error";
-    sendBtn.disabled=false;
-    sendBtn.textContent="Enviar registro";
-  }
 });
-=======
+
+
 // ============================================================
-// FORMULARIO QR + WEB3FORMS
+// ABRIR CÁMARA
 // ============================================================
 
-const form = document.getElementById("contactForm");
-const status = document.getElementById("status");
-const submitBtn = document.getElementById("submitBtn");
-
-// Access Key directamente configurada
-const WEB3FORMS_ACCESS_KEY =
-    "aec0b1b0-d22a-4f29-85ac-01fd8c2622ed";
-
-form.addEventListener("submit", async function (event) {
-
-    event.preventDefault();
-
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Enviando...";
-    status.textContent = "";
-
-    const formData = new FormData(form);
-
-    // Agregar Access Key directamente
-    formData.set("access_key", WEB3FORMS_ACCESS_KEY);
+openCameraBtn.addEventListener("click", async () => {
 
     try {
 
-        const response = await fetch(
-            "https://api.web3forms.com/submit",
-            {
-                method: "POST",
-                body: formData
-            }
-        );
+        if (!navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia) {
 
-        const result = await response.json();
+            alert(
+                "Tu navegador no permite utilizar la cámara directamente."
+            );
 
-        console.log("Respuesta Web3Forms:", result);
-
-        if (result.success) {
-
-            window.location.href = "./gracias.html";
-
-        } else {
-
-            status.textContent =
-                result.message ||
-                "No se pudo enviar el mensaje.";
-
-            submitBtn.disabled = false;
-            submitBtn.textContent = "Enviar mensaje";
+            return;
         }
+
+        cameraStream =
+            await navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: {
+                        ideal: "environment"
+                    },
+                    width: {
+                        ideal: 1280
+                    },
+                    height: {
+                        ideal: 720
+                    }
+                },
+                audio: false
+            });
+
+        camera.srcObject =
+            cameraStream;
+
+        cameraContainer.classList.remove("hidden");
+
+        openCameraBtn.classList.add("hidden");
+
+        previewWrap.classList.add("hidden");
 
     } catch (error) {
 
-        console.error("Error:", error);
+        console.error(error);
 
-        status.textContent =
-            "No se pudo conectar con Web3Forms.";
+        alert(
+            "No fue posible abrir la cámara. " +
+            "Debes permitir el acceso a la cámara."
+        );
 
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Enviar mensaje";
     }
 
 });
->>>>>>> 1adc5f276837ec90d428288b3347aacd7134431e
+
+
+// ============================================================
+// TOMAR FOTOGRAFÍA
+// ============================================================
+
+takePhotoBtn.addEventListener("click", () => {
+
+    if (!cameraStream) {
+        return;
+    }
+
+    const width =
+        camera.videoWidth;
+
+    const height =
+        camera.videoHeight;
+
+    if (!width || !height) {
+
+        alert(
+            "La cámara todavía no está lista. Intenta nuevamente."
+        );
+
+        return;
+    }
+
+    canvas.width = width;
+    canvas.height = height;
+
+    const context =
+        canvas.getContext("2d");
+
+    context.drawImage(
+        camera,
+        0,
+        0,
+        width,
+        height
+    );
+
+    canvas.toBlob(
+        blob => {
+
+            if (!blob) {
+
+                alert(
+                    "No fue posible capturar la fotografía."
+                );
+
+                return;
+            }
+
+            photoBlob = blob;
+
+            const imageURL =
+                URL.createObjectURL(blob);
+
+            preview.src =
+                imageURL;
+
+            previewWrap.classList.remove("hidden");
+
+            cameraContainer.classList.add("hidden");
+
+            stopCamera();
+
+        },
+        "image/jpeg",
+        0.82
+    );
+
+});
+
+
+// ============================================================
+// REPETIR FOTOGRAFÍA
+// ============================================================
+
+retakePhotoBtn.addEventListener("click", async () => {
+
+    photoBlob = null;
+
+    preview.src = "";
+
+    previewWrap.classList.add("hidden");
+
+    try {
+
+        cameraStream =
+            await navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: {
+                        ideal: "environment"
+                    },
+                    width: {
+                        ideal: 1280
+                    },
+                    height: {
+                        ideal: 720
+                    }
+                },
+                audio: false
+            });
+
+        camera.srcObject =
+            cameraStream;
+
+        cameraContainer.classList.remove("hidden");
+
+    } catch (error) {
+
+        alert(
+            "No fue posible volver a abrir la cámara."
+        );
+
+    }
+
+});
+
+
+// ============================================================
+// DETENER CÁMARA
+// ============================================================
+
+function stopCamera() {
+
+    if (cameraStream) {
+
+        cameraStream
+            .getTracks()
+            .forEach(track => track.stop());
+
+        cameraStream = null;
+
+    }
+
+    camera.srcObject = null;
+
+}
+
+
+// ============================================================
+// GPS
+// ============================================================
+
+locationBtn.addEventListener("click", obtenerUbicacion);
+
+function obtenerUbicacion() {
+
+    if (!navigator.geolocation) {
+
+        locationStatus.textContent =
+            "Este dispositivo no permite obtener ubicación.";
+
+        return;
+    }
+
+    locationStatus.textContent =
+        "Obteniendo ubicación...";
+
+    locationBtn.disabled = true;
+
+    navigator.geolocation.getCurrentPosition(
+
+        position => {
+
+            const latitude =
+                position.coords.latitude;
+
+            const longitude =
+                position.coords.longitude;
+
+            const accuracy =
+                position.coords.accuracy;
+
+            document.getElementById("latitud").value =
+                latitude;
+
+            document.getElementById("longitud").value =
+                longitude;
+
+            document.getElementById("accuracy").value =
+                accuracy;
+
+            locationStatus.textContent =
+                "✅ Ubicación registrada correctamente.";
+
+            locationBtn.textContent =
+                "✅ Ubicación registrada";
+
+        },
+
+        error => {
+
+            console.error(error);
+
+            locationStatus.textContent =
+                "⚠️ No se pudo obtener la ubicación. Puedes intentar nuevamente.";
+
+            locationBtn.disabled = false;
+
+        },
+
+        {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 0
+        }
+
+    );
+
+}
+
+
+// ============================================================
+// ENVÍO DEL FORMULARIO
+// ============================================================
+
+visitForm.addEventListener("submit", async event => {
+
+    event.preventDefault();
+
+    status.textContent = "";
+
+    // ------------------------------------------
+    // VALIDAR TIPO
+    // ------------------------------------------
+
+    if (!tipoSeleccionado) {
+
+        status.textContent =
+            "Selecciona Mantención o Seguridad.";
+
+        return;
+    }
+
+
+    // ------------------------------------------
+    // VALIDAR FOTO
+    // ------------------------------------------
+
+    if (!photoBlob) {
+
+        status.textContent =
+            "Debes tomar una fotografía antes de enviar el registro.";
+
+        return;
+    }
+
+
+    // ------------------------------------------
+    // VALIDAR GPS
+    // ------------------------------------------
+
+    const latitud =
+        document.getElementById("latitud").value;
+
+    const longitud =
+        document.getElementById("longitud").value;
+
+    if (!latitud || !longitud) {
+
+        status.textContent =
+            "Debes registrar tu ubicación antes de enviar.";
+
+        return;
+    }
+
+
+    // ------------------------------------------
+    // BLOQUEAR BOTÓN
+    // ------------------------------------------
+
+    sendBtn.disabled = true;
+
+    sendBtn.textContent =
+        "Enviando registro...";
+
+
+    try {
+
+        // --------------------------------------
+        // CONVERTIR FOTO A BASE64
+        // --------------------------------------
+
+        const base64 =
+            await blobToBase64(photoBlob);
+
+
+        // --------------------------------------
+        // DATOS
+        // --------------------------------------
+
+        const data =
+            new URLSearchParams();
+
+        data.append(
+            "piso",
+            piso
+        );
+
+        data.append(
+            "tipo",
+            tipoSeleccionado
+        );
+
+        data.append(
+            "nombre",
+            document.getElementById("nombre").value.trim()
+        );
+
+        data.append(
+            "correo",
+            document.getElementById("correo").value.trim()
+        );
+
+        data.append(
+            "telefono",
+            document.getElementById("telefono").value.trim()
+        );
+
+        data.append(
+            "mensaje",
+            document.getElementById("mensaje").value.trim()
+        );
+
+        data.append(
+            "fotoBase64",
+            base64
+        );
+
+        data.append(
+            "fotoMime",
+            "image/jpeg"
+        );
+
+        data.append(
+            "fotoNombre",
+            "foto_visita.jpg"
+        );
+
+        data.append(
+            "latitud",
+            latitud
+        );
+
+        data.append(
+            "longitud",
+            longitud
+        );
+
+        data.append(
+            "accuracy",
+            document.getElementById("accuracy").value
+        );
+
+
+        // --------------------------------------
+        // ENVÍO A GOOGLE APPS SCRIPT
+        // --------------------------------------
+
+        await fetch(
+            APPS_SCRIPT_URL,
+            {
+                method: "POST",
+                mode: "no-cors",
+                body: data
+            }
+        );
+
+
+        // --------------------------------------
+        // ÉXITO
+        // --------------------------------------
+
+        window.location.href =
+            "./gracias.html";
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        status.textContent =
+            "No fue posible enviar el registro.";
+
+        sendBtn.disabled = false;
+
+        sendBtn.textContent =
+            "Enviar registro";
+
+    }
+
+});
+
+
+// ============================================================
+// BLOB → BASE64
+// ============================================================
+
+function blobToBase64(blob) {
+
+    return new Promise((resolve, reject) => {
+
+        const reader =
+            new FileReader();
+
+        reader.onloadend = () => {
+
+            const result =
+                reader.result;
+
+            const base64 =
+                result.split(",")[1];
+
+            resolve(base64);
+
+        };
+
+        reader.onerror =
+            reject;
+
+        reader.readAsDataURL(blob);
+
+    });
+
+}
+
+
+// ============================================================
+// LIMPIAR CÁMARA AL SALIR
+// ============================================================
+
+window.addEventListener(
+    "beforeunload",
+    stopCamera
+);

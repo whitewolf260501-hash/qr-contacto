@@ -2,12 +2,12 @@
 <html lang="es">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <meta
         name="description"
-        content="Sistema de registro de visitas por piso"
+        content="Registro de visitas del edificio"
     >
 
     <title>Registro de visita</title>
@@ -17,144 +17,248 @@
 
 <body>
 
-    <main class="container">
+<main class="container">
 
-        <section class="card">
+    <section class="card">
 
-            <div class="brand">
-                REGISTRO DE VISITA
-            </div>
+        <div class="brand">
+            REGISTRO DE VISITA
+        </div>
 
-            <h1>
-                Contacto del edificio
-            </h1>
+        <h1>Contacto del edificio</h1>
 
-            <p class="subtitle">
-                Complete sus datos y registre su visita.
-            </p>
+        <p class="subtitle">
+            Complete sus datos y registre su visita.
+        </p>
 
-            <div class="floor-box">
-                <span>Piso detectado</span>
-                <strong id="pisoLabel">Cargando...</strong>
-            </div>
+        <div class="floor-box">
+            <span>Piso detectado</span>
+            <strong id="pisoLabel">Cargando...</strong>
+        </div>
 
-            <form id="visitForm">
+        <form id="visitForm">
 
-                <label for="nombre">
-                    Nombre
-                </label>
+            <label for="nombre">
+                Nombre
+            </label>
 
-                <input
-                    id="nombre"
-                    type="text"
-                    required
-                    autocomplete="name"
-                >
+            <input
+                id="nombre"
+                type="text"
+                required
+                autocomplete="name"
+                placeholder="Ingrese su nombre"
+            >
 
-                <label for="correo">
-                    Correo
-                </label>
+            <label for="correo">
+                Correo
+            </label>
 
-                <input
-                    id="correo"
-                    type="email"
-                    required
-                    autocomplete="email"
-                >
+            <input
+                id="correo"
+                type="email"
+                required
+                autocomplete="email"
+                placeholder="correo@ejemplo.com"
+            >
 
-                <label for="telefono">
-                    Teléfono
-                </label>
+            <label for="telefono">
+                Teléfono
+            </label>
 
-                <input
-                    id="telefono"
-                    type="tel"
-                    autocomplete="tel"
-                >
+            <input
+                id="telefono"
+                type="tel"
+                autocomplete="tel"
+                placeholder="+56 9..."
+            >
 
-                <label for="mensaje">
-                    Mensaje
-                </label>
+            <label for="mensaje">
+                Mensaje
+            </label>
 
-                <textarea
-                    id="mensaje"
-                    rows="4"
-                    required
-                ></textarea>
+            <textarea
+                id="mensaje"
+                rows="4"
+                required
+                placeholder="Indique el motivo de la visita"
+            ></textarea>
 
-                <label for="foto">
-                    Fotografía
-                </label>
+
+            <!-- ==========================================
+                 CÁMARA
+            =========================================== -->
+
+            <div class="camera-section">
+
+                <h3>📸 Fotografía obligatoria</h3>
 
                 <p class="hint">
-                    Tome una fotografía con la cámara del teléfono.
-                    La imagen se enviará como archivo adjunto al correo.
+                    Debes tomar una fotografía ahora para registrar la visita.
+                    La fotografía se captura directamente con la cámara del teléfono.
                 </p>
 
-                <input
-                    id="foto"
-                    type="file"
-                    accept="image/*"
-                    capture="environment"
-                    required
+                <button
+                    type="button"
+                    id="openCameraBtn"
+                    class="camera-button"
                 >
+                    📷 Abrir cámara
+                </button>
+
+                <div
+                    id="cameraContainer"
+                    class="camera-container hidden"
+                >
+
+                    <video
+                        id="camera"
+                        autoplay
+                        playsinline
+                    ></video>
+
+                    <button
+                        type="button"
+                        id="takePhotoBtn"
+                        class="take-photo-button"
+                    >
+                        📸 Tomar fotografía
+                    </button>
+
+                </div>
+
+                <canvas
+                    id="canvas"
+                    class="hidden"
+                ></canvas>
 
                 <div
                     id="previewWrap"
                     class="preview hidden"
                 >
+
+                    <p class="photo-ok">
+                        ✅ Fotografía capturada correctamente
+                    </p>
+
                     <img
                         id="preview"
-                        alt="Vista previa"
+                        alt="Fotografía capturada"
                     >
-                </div>
-
-                <h3>
-                    ¿Quién realizó la visita?
-                </h3>
-
-                <div class="staff-grid">
 
                     <button
                         type="button"
-                        class="staff"
-                        data-tipo="Mantención"
+                        id="retakePhotoBtn"
+                        class="retake-button"
                     >
-                        🛠️ Mantención
-                    </button>
-
-                    <button
-                        type="button"
-                        class="staff"
-                        data-tipo="Seguridad"
-                    >
-                        🛡️ Seguridad
+                        🔄 Tomar otra fotografía
                     </button>
 
                 </div>
+
+            </div>
+
+
+            <!-- ==========================================
+                 TIPO DE VISITA
+            =========================================== -->
+
+            <h3>
+                ¿Quién realizó la visita?
+            </h3>
+
+            <div class="staff-grid">
 
                 <button
-                    id="sendBtn"
-                    class="send"
-                    type="submit"
+                    type="button"
+                    class="staff"
+                    data-tipo="Mantención"
                 >
-                    Enviar registro
+                    🛠️ Mantención
                 </button>
 
-                <div
-                    id="status"
-                    class="status"
-                    aria-live="polite"
-                ></div>
+                <button
+                    type="button"
+                    class="staff"
+                    data-tipo="Seguridad"
+                >
+                    🛡️ Seguridad
+                </button>
 
-            </form>
+            </div>
 
-        </section>
 
-    </main>
+            <!-- ==========================================
+                 UBICACIÓN
+            =========================================== -->
 
-    <script src="./js/config.js"></script>
-    <script src="./js/app.js"></script>
+            <div class="location-box">
+
+                <strong>
+                    📍 Verificación de ubicación
+                </strong>
+
+                <p id="locationStatus">
+                    Se solicitará tu ubicación para registrar el lugar
+                    desde donde se realizó la visita.
+                </p>
+
+                <button
+                    type="button"
+                    id="locationBtn"
+                    class="location-button"
+                >
+                    📍 Obtener ubicación
+                </button>
+
+            </div>
+
+
+            <!-- CAMPOS OCULTOS -->
+
+            <input
+                type="hidden"
+                id="latitud"
+            >
+
+            <input
+                type="hidden"
+                id="longitud"
+            >
+
+            <input
+                type="hidden"
+                id="accuracy"
+            >
+
+            <input
+                type="hidden"
+                id="tipo"
+            >
+
+
+            <button
+                id="sendBtn"
+                class="send"
+                type="submit"
+            >
+                Enviar registro
+            </button>
+
+            <div
+                id="status"
+                class="status"
+                aria-live="polite"
+            ></div>
+
+        </form>
+
+    </section>
+
+</main>
+
+<script src="./js/config.js"></script>
+<script src="./js/app.js"></script>
 
 </body>
 
