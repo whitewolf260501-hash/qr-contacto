@@ -1,32 +1,652 @@
 <!doctype html>
 <html lang="es">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Generador de QR por piso</title>
-<style>
-body{font-family:Arial;margin:0;background:#f1f5f9;color:#111}.wrap{max-width:1100px;margin:auto;padding:25px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}.qr{background:#fff;padding:20px;text-align:center;border-radius:16px;box-shadow:0 4px 18px #0001}
-button{padding:10px 16px;border:0;border-radius:8px;cursor:pointer}@media print{button{display:none}.qr{break-inside:avoid;box-shadow:none}}
-</style>
+
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>
+        Generador de QR - Piso y Sector
+    </title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            margin: 0;
+
+            background: #f1f5f9;
+
+            color: #111827;
+
+        }
+
+
+        .wrap {
+
+            max-width: 1200px;
+
+            margin: auto;
+
+            padding: 25px;
+
+        }
+
+
+        h1 {
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .configuracion {
+
+            background: white;
+
+            padding: 20px;
+
+            border-radius: 16px;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 4px 18px #0001;
+
+        }
+
+
+        .configuracion label {
+
+            display: block;
+
+            font-weight: bold;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .configuracion input {
+
+            width: 100%;
+
+            max-width: 200px;
+
+            padding: 10px;
+
+            border: 1px solid #cbd5e1;
+
+            border-radius: 8px;
+
+            font-size: 16px;
+
+        }
+
+
+        .botones {
+
+            margin-top: 15px;
+
+            display: flex;
+
+            gap: 10px;
+
+            flex-wrap: wrap;
+
+        }
+
+
+        button {
+
+            padding: 11px 18px;
+
+            border: 0;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+        }
+
+
+        .btn-generar {
+
+            background: #2563eb;
+
+            color: white;
+
+        }
+
+
+        .btn-imprimir {
+
+            background: #111827;
+
+            color: white;
+
+        }
+
+
+        .info {
+
+            margin-top: 15px;
+
+            padding: 12px;
+
+            background: #eff6ff;
+
+            border-radius: 10px;
+
+            color: #1e40af;
+
+        }
+
+
+        .grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(280px, 1fr)
+                );
+
+            gap: 20px;
+
+        }
+
+
+        .qr {
+
+            background: white;
+
+            padding: 20px;
+
+            text-align: center;
+
+            border-radius: 16px;
+
+            box-shadow:
+                0 4px 18px #0001;
+
+        }
+
+
+        .qr h2 {
+
+            margin-top: 0;
+
+            margin-bottom: 5px;
+
+        }
+
+
+        .sector {
+
+            font-size: 22px;
+
+            font-weight: bold;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .qr canvas {
+
+            max-width: 100%;
+
+            height: auto;
+
+        }
+
+
+        .url {
+
+            font-size: 11px;
+
+            color: #64748b;
+
+            word-break: break-all;
+
+            margin-top: 10px;
+
+        }
+
+
+        .instruccion {
+
+            font-size: 14px;
+
+            color: #475569;
+
+        }
+
+
+        @media print {
+
+            body {
+
+                background: white;
+
+            }
+
+
+            .configuracion {
+
+                display: none;
+
+            }
+
+
+            .qr {
+
+                box-shadow: none;
+
+                border: 1px solid #ddd;
+
+                break-inside: avoid;
+
+                page-break-inside: avoid;
+
+            }
+
+
+            .grid {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+                gap: 15px;
+
+            }
+
+
+            .wrap {
+
+                padding: 10px;
+
+            }
+
+        }
+
+    </style>
+
 </head>
+
+
 <body>
+
+
 <div class="wrap">
-<h1>QR de registro por piso</h1>
-<p>Cambia TOTAL_PISOS si el edificio tiene otra cantidad.</p>
-<div id="grid" class="grid"></div>
+
+
+    <h1>
+        📱 Generador de QR por piso y sector
+    </h1>
+
+
+    <p>
+        Cada código QR representa una ubicación específica
+        del edificio.
+    </p>
+
+
+    <!-- =====================================================
+         CONFIGURACIÓN
+    ====================================================== -->
+
+    <div class="configuracion">
+
+
+        <label for="totalPisos">
+
+            Cantidad de pisos:
+
+        </label>
+
+
+        <input
+            type="number"
+            id="totalPisos"
+            min="1"
+            max="100"
+            value="10"
+        >
+
+
+        <div class="info">
+
+            <strong>
+                Sectores incluidos:
+            </strong>
+
+            A, B, C y D
+
+            <br><br>
+
+            Ejemplo:
+
+            <br>
+
+            Piso 1 - Sector A
+
+            <br>
+
+            Piso 1 - Sector B
+
+            <br>
+
+            Piso 1 - Sector C
+
+            <br>
+
+            Piso 1 - Sector D
+
+        </div>
+
+
+        <div class="botones">
+
+
+            <button
+                class="btn-generar"
+                onclick="generarQR()"
+            >
+
+                🔄 Generar QR
+
+            </button>
+
+
+            <button
+                class="btn-imprimir"
+                onclick="window.print()"
+            >
+
+                🖨️ Imprimir todos los QR
+
+            </button>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =====================================================
+         QR
+    ====================================================== -->
+
+    <div
+        id="grid"
+        class="grid"
+    ></div>
+
+
 </div>
-<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-<script>
-const TOTAL_PISOS=10;
-const base=location.origin+location.pathname.replace("generar-qrs.html","index.html");
-const grid=document.getElementById("grid");
-for(let piso=1;piso<=TOTAL_PISOS;piso++){
- const box=document.createElement("div");box.className="qr";
- box.innerHTML=`<h2>Piso ${piso}</h2><canvas></canvas><p>Escanea para registrar visita</p><button onclick="window.print()">Imprimir</button>`;
- grid.appendChild(box);
- QRCode.toCanvas(box.querySelector("canvas"),`${base}?piso=${piso}`,{width:260,margin:4});
-}
+
+
+<!-- =========================================================
+     LIBRERÍA QR
+========================================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js">
 </script>
+
+
+<script>
+
+
+// ============================================================
+// CONFIGURACIÓN
+// ============================================================
+
+const sectores = [
+    "A",
+    "B",
+    "C",
+    "D"
+];
+
+
+// ============================================================
+// CONTENEDOR
+// ============================================================
+
+const grid =
+    document.getElementById(
+        "grid"
+    );
+
+
+// ============================================================
+// GENERAR QR
+// ============================================================
+
+function generarQR() {
+
+
+    // ========================================================
+    // OBTENER CANTIDAD DE PISOS
+    // ========================================================
+
+    const totalPisos =
+        parseInt(
+            document.getElementById(
+                "totalPisos"
+            ).value
+        );
+
+
+    if (
+        !totalPisos ||
+        totalPisos < 1
+    ) {
+
+        alert(
+            "Ingresa una cantidad válida de pisos."
+        );
+
+        return;
+
+    }
+
+
+    // ========================================================
+    // LIMPIAR QR ANTERIORES
+    // ========================================================
+
+    grid.innerHTML = "";
+
+
+    // ========================================================
+    // URL BASE
+    //
+    // Ejemplo:
+    //
+    // https://whitewolf260501-hash.github.io/qr-contacto/
+    //
+    // ========================================================
+
+    const base =
+        location.origin +
+        location.pathname.replace(
+            "generar-qrs.html",
+            "index.html"
+        );
+
+
+    // ========================================================
+    // CREAR QR
+    // ========================================================
+
+    for (
+        let piso = 1;
+        piso <= totalPisos;
+        piso++
+    ) {
+
+
+        for (
+            const sector of sectores
+        ) {
+
+
+            // ==================================================
+            // URL DEL QR
+            // ==================================================
+
+            const url =
+
+                base +
+
+                "?piso=" +
+
+                encodeURIComponent(
+                    piso
+                ) +
+
+                "&sector=" +
+
+                encodeURIComponent(
+                    sector
+                );
+
+
+            // ==================================================
+            // CONTENEDOR
+            // ==================================================
+
+            const box =
+                document.createElement(
+                    "div"
+                );
+
+
+            box.className =
+                "qr";
+
+
+            // ==================================================
+            // TÍTULO
+            // ==================================================
+
+            box.innerHTML = `
+
+                <h2>
+                    Piso ${piso}
+                </h2>
+
+                <div class="sector">
+                    Sector ${sector}
+                </div>
+
+                <canvas></canvas>
+
+                <p class="instruccion">
+                    Escanea este QR para registrar una visita
+                </p>
+
+                <div class="url">
+                    ${url}
+                </div>
+
+            `;
+
+
+            // ==================================================
+            // AGREGAR A LA PÁGINA
+            // ==================================================
+
+            grid.appendChild(
+                box
+            );
+
+
+            // ==================================================
+            // GENERAR QR
+            // ==================================================
+
+            QRCode.toCanvas(
+
+                box.querySelector(
+                    "canvas"
+                ),
+
+                url,
+
+                {
+
+                    width: 260,
+
+                    margin: 4
+
+                },
+
+                function(error) {
+
+                    if (error) {
+
+                        console.error(
+                            "Error generando QR:",
+                            error
+                        );
+
+                    }
+
+                }
+
+            );
+
+        }
+
+    }
+
+}
+
+
+// ============================================================
+// GENERAR AUTOMÁTICAMENTE AL ABRIR
+// ============================================================
+
+window.addEventListener(
+    "load",
+    function() {
+
+        generarQR();
+
+    }
+);
+
+
+</script>
+
+
 </body>
+
 </html>
