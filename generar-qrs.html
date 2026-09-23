@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Generador de QR por piso</title>
+<style>
+body{font-family:Arial;margin:0;background:#f1f5f9;color:#111}.wrap{max-width:1100px;margin:auto;padding:25px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}.qr{background:#fff;padding:20px;text-align:center;border-radius:16px;box-shadow:0 4px 18px #0001}
+button{padding:10px 16px;border:0;border-radius:8px;cursor:pointer}@media print{button{display:none}.qr{break-inside:avoid;box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>QR de registro por piso</h1>
+<p>Cambia TOTAL_PISOS si el edificio tiene otra cantidad.</p>
+<div id="grid" class="grid"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<script>
+const TOTAL_PISOS=10;
+const base=location.origin+location.pathname.replace("generar-qrs.html","index.html");
+const grid=document.getElementById("grid");
+for(let piso=1;piso<=TOTAL_PISOS;piso++){
+ const box=document.createElement("div");box.className="qr";
+ box.innerHTML=`<h2>Piso ${piso}</h2><canvas></canvas><p>Escanea para registrar visita</p><button onclick="window.print()">Imprimir</button>`;
+ grid.appendChild(box);
+ QRCode.toCanvas(box.querySelector("canvas"),`${base}?piso=${piso}`,{width:260,margin:4});
+}
+</script>
+</body>
+</html>

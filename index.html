@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Registro de visita</title>
+<link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+<main class="container">
+<section class="card">
+<div class="brand">REGISTRO DE VISITA</div>
+<h1>Contacto del edificio</h1>
+<p class="subtitle">Complete sus datos y registre su visita.</p>
+
+<div class="floor-box">
+<span>Piso detectado</span>
+<strong id="pisoLabel">Cargando...</strong>
+</div>
+
+<form id="visitForm">
+<label>Nombre</label>
+<input id="nombre" type="text" required autocomplete="name">
+
+<label>Correo</label>
+<input id="correo" type="email" required autocomplete="email">
+
+<label>Teléfono</label>
+<input id="telefono" type="tel" autocomplete="tel">
+
+<label>Mensaje</label>
+<textarea id="mensaje" rows="4" required></textarea>
+
+<label>Fotografía</label>
+<p class="hint">Tome una fotografía con la cámara del teléfono. La imagen se enviará como archivo adjunto al correo.</p>
+<input id="foto" type="file" accept="image/*" capture="environment" required>
+
+<div id="previewWrap" class="preview hidden">
+<img id="preview" alt="Vista previa">
+</div>
+
+<h3>¿Quién realizó la visita?</h3>
+<div class="staff-grid">
+<button type="button" class="staff" data-tipo="Mantención">🛠️ Mantención</button>
+<button type="button" class="staff" data-tipo="Seguridad">🛡️ Seguridad</button>
+</div>
+
+<button id="sendBtn" class="send" type="submit">Enviar registro</button>
+<div id="status" class="status" aria-live="polite"></div>
+</form>
+</section>
+</main>
+
+<script src="./js/config.js"></script>
+<script src="./js/app.js"></script>
+</body>
+</html>
