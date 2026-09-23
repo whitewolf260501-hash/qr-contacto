@@ -1,106 +1,161 @@
-<<<<<<< HEAD
-<!doctype html>
-<html lang="es">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Registro de visita</title>
-<link rel="stylesheet" href="./css/styles.css">
-</head>
-<body>
-<main class="container">
-<section class="card">
-<div class="brand">REGISTRO DE VISITA</div>
-<h1>Contacto del edificio</h1>
-<p class="subtitle">Complete sus datos y registre su visita.</p>
-
-<div class="floor-box">
-<span>Piso detectado</span>
-<strong id="pisoLabel">Cargando...</strong>
-</div>
-
-<form id="visitForm">
-<label>Nombre</label>
-<input id="nombre" type="text" required autocomplete="name">
-
-<label>Correo</label>
-<input id="correo" type="email" required autocomplete="email">
-
-<label>Teléfono</label>
-<input id="telefono" type="tel" autocomplete="tel">
-
-<label>Mensaje</label>
-<textarea id="mensaje" rows="4" required></textarea>
-
-<label>Fotografía</label>
-<p class="hint">Tome una fotografía con la cámara del teléfono. La imagen se enviará como archivo adjunto al correo.</p>
-<input id="foto" type="file" accept="image/*" capture="environment" required>
-
-<div id="previewWrap" class="preview hidden">
-<img id="preview" alt="Vista previa">
-</div>
-
-<h3>¿Quién realizó la visita?</h3>
-<div class="staff-grid">
-<button type="button" class="staff" data-tipo="Mantención">🛠️ Mantención</button>
-<button type="button" class="staff" data-tipo="Seguridad">🛡️ Seguridad</button>
-</div>
-
-<button id="sendBtn" class="send" type="submit">Enviar registro</button>
-<div id="status" class="status" aria-live="polite"></div>
-</form>
-</section>
-</main>
-
-<script src="./js/config.js"></script>
-<script src="./js/app.js"></script>
-=======
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Formulario de contacto por QR">
-  <title>Contáctanos</title>
-  <link rel="stylesheet" href="./css/styles.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta
+        name="description"
+        content="Sistema de registro de visitas por piso"
+    >
+
+    <title>Registro de visita</title>
+
+    <link rel="stylesheet" href="./css/styles.css">
 </head>
+
 <body>
-  <main class="page">
-    <section class="card">
-      <div class="icon">✉️</div>
-      <h1>Contáctanos</h1>
-      <p class="intro">Completa el formulario y recibiré tu mensaje directamente por correo.</p>
 
-      <form id="contactForm" action="https://api.web3forms.com/submit" method="POST">
-        <input type="hidden" name="access_key" id="accessKey">
+    <main class="container">
 
-        <input type="hidden" name="subject" value="Nuevo mensaje recibido desde QR">
-        <input type="hidden" name="from_name" value="Formulario QR">
-        <input type="hidden" name="redirect" value="">
+        <section class="card">
 
-        <label for="name">Nombre</label>
-        <input id="name" name="name" type="text" placeholder="Tu nombre" maxlength="100" required>
+            <div class="brand">
+                REGISTRO DE VISITA
+            </div>
 
-        <label for="email">Tu correo</label>
-        <input id="email" name="email" type="email" placeholder="tu@correo.com" maxlength="150" required>
+            <h1>
+                Contacto del edificio
+            </h1>
 
-        <label for="phone">Teléfono <span>(opcional)</span></label>
-        <input id="phone" name="phone" type="tel" placeholder="+56 9..." maxlength="30">
+            <p class="subtitle">
+                Complete sus datos y registre su visita.
+            </p>
 
-        <label for="message">Mensaje</label>
-        <textarea id="message" name="message" rows="7" placeholder="Escribe tu mensaje..." maxlength="2000" required></textarea>
+            <div class="floor-box">
+                <span>Piso detectado</span>
+                <strong id="pisoLabel">Cargando...</strong>
+            </div>
 
-        <!-- Anti-spam honeypot -->
-        <input type="checkbox" name="botcheck" class="hidden">
+            <form id="visitForm">
 
-        <button id="submitBtn" type="submit">Enviar mensaje</button>
-        <p id="status" class="status"></p>
-      </form>
-    </section>
-  </main>
+                <label for="nombre">
+                    Nombre
+                </label>
 
-  <script src="./js/config.js"></script>
-  <script src="./js/app.js"></script>
->>>>>>> 1adc5f276837ec90d428288b3347aacd7134431e
+                <input
+                    id="nombre"
+                    type="text"
+                    required
+                    autocomplete="name"
+                >
+
+                <label for="correo">
+                    Correo
+                </label>
+
+                <input
+                    id="correo"
+                    type="email"
+                    required
+                    autocomplete="email"
+                >
+
+                <label for="telefono">
+                    Teléfono
+                </label>
+
+                <input
+                    id="telefono"
+                    type="tel"
+                    autocomplete="tel"
+                >
+
+                <label for="mensaje">
+                    Mensaje
+                </label>
+
+                <textarea
+                    id="mensaje"
+                    rows="4"
+                    required
+                ></textarea>
+
+                <label for="foto">
+                    Fotografía
+                </label>
+
+                <p class="hint">
+                    Tome una fotografía con la cámara del teléfono.
+                    La imagen se enviará como archivo adjunto al correo.
+                </p>
+
+                <input
+                    id="foto"
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    required
+                >
+
+                <div
+                    id="previewWrap"
+                    class="preview hidden"
+                >
+                    <img
+                        id="preview"
+                        alt="Vista previa"
+                    >
+                </div>
+
+                <h3>
+                    ¿Quién realizó la visita?
+                </h3>
+
+                <div class="staff-grid">
+
+                    <button
+                        type="button"
+                        class="staff"
+                        data-tipo="Mantención"
+                    >
+                        🛠️ Mantención
+                    </button>
+
+                    <button
+                        type="button"
+                        class="staff"
+                        data-tipo="Seguridad"
+                    >
+                        🛡️ Seguridad
+                    </button>
+
+                </div>
+
+                <button
+                    id="sendBtn"
+                    class="send"
+                    type="submit"
+                >
+                    Enviar registro
+                </button>
+
+                <div
+                    id="status"
+                    class="status"
+                    aria-live="polite"
+                ></div>
+
+            </form>
+
+        </section>
+
+    </main>
+
+    <script src="./js/config.js"></script>
+    <script src="./js/app.js"></script>
+
 </body>
+
 </html>
