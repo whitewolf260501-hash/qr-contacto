@@ -2,8 +2,13 @@
 <html lang="es">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <meta
         name="description"
@@ -12,31 +17,80 @@
 
     <title>Registro de visita</title>
 
-    <link rel="stylesheet" href="./css/styles.css">
+    <link
+        rel="stylesheet"
+        href="./css/styles.css"
+    >
+
 </head>
 
+
 <body>
+
 
 <main class="container">
 
     <section class="card">
 
+
+        <!-- ==========================================
+             ENCABEZADO
+        =========================================== -->
+
         <div class="brand">
             REGISTRO DE VISITA
         </div>
 
-        <h1>Contacto del edificio</h1>
+
+        <h1>
+            Contacto del edificio
+        </h1>
+
 
         <p class="subtitle">
             Complete sus datos y registre su visita.
         </p>
 
+
+        <!-- ==========================================
+             BOTÓN ESCANEAR QR
+        =========================================== -->
+
+        <a
+            href="./escanear-qr.html"
+            class="scanner-button"
+        >
+            📱 Escanear QR del piso y sector
+        </a>
+
+
+        <!-- ==========================================
+             UBICACIÓN DETECTADA
+        =========================================== -->
+
         <div class="floor-box">
-            <span>Piso detectado</span>
-            <strong id="pisoLabel">Cargando...</strong>
+
+            <span>
+                Ubicación detectada
+            </span>
+
+            <strong id="pisoLabel">
+                Cargando...
+            </strong>
+
         </div>
 
+
+        <!-- ==========================================
+             FORMULARIO
+        =========================================== -->
+
         <form id="visitForm">
+
+
+            <!-- ======================================
+                 NOMBRE
+            ======================================= -->
 
             <label for="nombre">
                 Nombre
@@ -50,6 +104,11 @@
                 placeholder="Ingrese su nombre"
             >
 
+
+            <!-- ======================================
+                 CORREO
+            ======================================= -->
+
             <label for="correo">
                 Correo
             </label>
@@ -62,6 +121,11 @@
                 placeholder="correo@ejemplo.com"
             >
 
+
+            <!-- ======================================
+                 TELÉFONO
+            ======================================= -->
+
             <label for="telefono">
                 Teléfono
             </label>
@@ -72,6 +136,11 @@
                 autocomplete="tel"
                 placeholder="+56 9..."
             >
+
+
+            <!-- ======================================
+                 MENSAJE
+            ======================================= -->
 
             <label for="mensaje">
                 Mensaje
@@ -86,30 +155,46 @@
 
 
             <!-- ==========================================
-                 CÁMARA
+                 CÁMARA / SELFIE
             =========================================== -->
 
             <div class="camera-section">
 
-                <h3>📸 Fotografía obligatoria</h3>
+
+                <h3>
+                    🤳 Selfie obligatoria
+                </h3>
+
 
                 <p class="hint">
-                    Debes tomar una fotografía ahora para registrar la visita.
-                    La fotografía se captura directamente con la cámara del teléfono.
+
+                    Debes tomar una fotografía ahora para
+                    registrar la visita.
+
+                    La fotografía se tomará directamente
+                    con la cámara frontal del teléfono.
+
                 </p>
+
+
+                <!-- ABRIR CÁMARA -->
 
                 <button
                     type="button"
                     id="openCameraBtn"
                     class="camera-button"
                 >
-                    📷 Abrir cámara
+                    🤳 Abrir cámara frontal
                 </button>
+
+
+                <!-- CONTENEDOR DE CÁMARA -->
 
                 <div
                     id="cameraContainer"
                     class="camera-container hidden"
                 >
+
 
                     <video
                         id="camera"
@@ -117,44 +202,57 @@
                         playsinline
                     ></video>
 
+
                     <button
                         type="button"
                         id="takePhotoBtn"
                         class="take-photo-button"
                     >
-                        📸 Tomar fotografía
+                        📸 Tomar selfie
                     </button>
 
+
                 </div>
+
+
+                <!-- CANVAS OCULTO -->
 
                 <canvas
                     id="canvas"
                     class="hidden"
                 ></canvas>
 
+
+                <!-- PREVISUALIZACIÓN -->
+
                 <div
                     id="previewWrap"
                     class="preview hidden"
                 >
 
+
                     <p class="photo-ok">
-                        ✅ Fotografía capturada correctamente
+                        ✅ Selfie capturada correctamente
                     </p>
+
 
                     <img
                         id="preview"
-                        alt="Fotografía capturada"
+                        alt="Selfie capturada"
                     >
+
 
                     <button
                         type="button"
                         id="retakePhotoBtn"
                         class="retake-button"
                     >
-                        🔄 Tomar otra fotografía
+                        🔄 Tomar otra selfie
                     </button>
 
+
                 </div>
+
 
             </div>
 
@@ -167,7 +265,9 @@
                 ¿Quién realizó la visita?
             </h3>
 
+
             <div class="staff-grid">
+
 
                 <button
                     type="button"
@@ -177,6 +277,7 @@
                     🛠️ Mantención
                 </button>
 
+
                 <button
                     type="button"
                     class="staff"
@@ -185,23 +286,30 @@
                     🛡️ Seguridad
                 </button>
 
+
             </div>
 
 
             <!-- ==========================================
-                 UBICACIÓN
+                 UBICACIÓN GPS
             =========================================== -->
 
             <div class="location-box">
+
 
                 <strong>
                     📍 Verificación de ubicación
                 </strong>
 
+
                 <p id="locationStatus">
-                    Se solicitará tu ubicación para registrar el lugar
-                    desde donde se realizó la visita.
+
+                    Se solicitará tu ubicación para
+                    registrar el lugar desde donde se
+                    realizó la visita.
+
                 </p>
+
 
                 <button
                     type="button"
@@ -211,39 +319,81 @@
                     📍 Obtener ubicación
                 </button>
 
+
             </div>
 
 
-            <!-- CAMPOS OCULTOS -->
+            <!-- ==========================================
+                 CAMPOS OCULTOS
+            =========================================== -->
+
 
             <input
                 type="hidden"
                 id="latitud"
+                name="latitud"
             >
+
 
             <input
                 type="hidden"
                 id="longitud"
+                name="longitud"
             >
+
 
             <input
                 type="hidden"
                 id="accuracy"
+                name="accuracy"
             >
+
 
             <input
                 type="hidden"
                 id="tipo"
+                name="tipo"
             >
 
+
+            <!-- ==========================================
+                 PISO
+            =========================================== -->
+
+            <input
+                type="hidden"
+                id="piso"
+                name="piso"
+            >
+
+
+            <!-- ==========================================
+                 SECTOR
+            =========================================== -->
+
+            <input
+                type="hidden"
+                id="sector"
+                name="sector"
+            >
+
+
+            <!-- ==========================================
+                 BOTÓN ENVIAR
+            =========================================== -->
 
             <button
                 id="sendBtn"
                 class="send"
                 type="submit"
             >
-                Enviar registro
+                📤 Enviar registro
             </button>
+
+
+            <!-- ==========================================
+                 ESTADO
+            =========================================== -->
 
             <div
                 id="status"
@@ -251,14 +401,24 @@
                 aria-live="polite"
             ></div>
 
+
         </form>
+
 
     </section>
 
+
 </main>
 
+
+<!-- ==========================================
+     JAVASCRIPT
+=========================================== -->
+
 <script src="./js/config.js"></script>
+
 <script src="./js/app.js"></script>
+
 
 </body>
 

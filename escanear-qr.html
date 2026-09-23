@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Escáner QR para identificar piso y sector"
+    >
+
+    <title>Escanear ubicación</title>
+
+    <link
+        rel="stylesheet"
+        href="./css/styles.css"
+    >
+
+    <!-- Librería para escanear QR -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+    <style>
+
+        .scanner-page {
+            max-width: 520px;
+            margin: 20px auto;
+            padding: 15px;
+        }
+
+        .scanner-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.10);
+        }
+
+        .scanner-title {
+            text-align: center;
+            margin: 0 0 10px;
+        }
+
+        .scanner-description {
+            text-align: center;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        #reader {
+            width: 100%;
+            overflow: hidden;
+            border-radius: 14px;
+        }
+
+        #reader video {
+            border-radius: 14px;
+        }
+
+        .scanner-result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background: #eef6ff;
+            color: #1e40af;
+            text-align: center;
+            display: none;
+            font-weight: bold;
+        }
+
+        .scanner-button {
+            display: block;
+            width: 100%;
+            margin-top: 15px;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .location-preview {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .location-preview strong {
+            display: block;
+            font-size: 18px;
+            margin-top: 5px;
+        }
+
+        .camera-info {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 13px;
+            color: #777;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<main class="scanner-page">
+
+    <section class="scanner-card">
+
+
+        <h1 class="scanner-title">
+            📱 Escanear ubicación
+        </h1>
+
+
+        <p class="scanner-description">
+
+            Escanea el código QR correspondiente al
+            <strong>piso y sector</strong> donde te encuentras.
+
+        </p>
+
+
+        <!-- ESCÁNER -->
+
+        <div id="reader"></div>
+
+
+        <p class="camera-info">
+            📷 Se utilizará la cámara del teléfono para leer el QR.
+        </p>
+
+
+        <!-- RESULTADO -->
+
+        <div
+            id="scannerResult"
+            class="scanner-result"
+        >
+            QR detectado correctamente.
+        </div>
+
+
+        <!-- UBICACIÓN -->
+
+        <div
+            id="locationPreview"
+            class="location-preview"
+        >
+
+            📍 Ubicación detectada
+
+            <strong id="locationText">
+                -
+            </strong>
+
+        </div>
+
+
+        <!-- VOLVER -->
+
+        <a
+            href="./index.html"
+            class="scanner-button"
+        >
+            ← Volver al registro
+        </a>
+
+
+    </section>
+
+
+</main>
+
+
+<script>
+
+    const scannerResult =
+        document.getElementById(
+            "scannerResult"
+        );
+
+    const locationPreview =
+        document.getElementById(
+            "locationPreview"
+        );
+
+    const locationText =
+        document.getElementById(
+            "locationText"
+        );
+
+
+    let redirigiendo = false;
+
+
+    const scanner =
+        new Html5Qrcode("reader");
+
+
+    const config = {
+
+        fps: 10,
+
+        qrbox: {
+            width: 250,
+            height: 250
+        },
+
+        aspectRatio: 1
+
+    };
+
+
+    /*
+     * Abrimos la cámara trasera para escanear.
+     *
+     * Esto es correcto:
+     * - ESCANEAR QR → cámara trasera
+     * - TOMAR SELFIE → cámara frontal
+     */
+
+
+    scanner.start(
+
+        {
+            facingMode: {
+                ideal: "environment"
+            }
+        },
+
+        config,
+
+
+        async function(decodedText) {
+
+
+            if (redirigiendo) {
+                return;
+            }
+
+
+            redirigiendo = true;
+
+
+            let url;
+
+
+            try {
+
+                /*
+                 * Convertimos el texto leído
+                 * en una URL.
+                 */
+
+                if (
+                    decodedText.startsWith(
+                        "http://"
+                    ) ||
+                    decodedText.startsWith(
+                        "https://"
+                    )
+                ) {
+
+                    url =
+                        new URL(decodedText);
+
+                } else if (
+                    decodedText.startsWith("?")
+                ) {
+
+                    url =
+                        new URL(
+                            window.location.origin +
+                            window.location.pathname +
+                            decodedText
+                        );
+
+                } else if (
+                    /^\d+$/.test(
+                        decodedText.trim()
+                    )
+                ) {
+
+                    /*
+                     * Compatibilidad con QR
+                     * antiguos que solamente
+                     * contienen el número del piso.
+                     */
+
+                    url =
+                        new URL(
+                            window.location.origin +
+                            window.location.pathname
+                        );
+
+                    url.searchParams.set(
+                        "piso",
+                        decodedText.trim()
+                    );
+
+                } else {
+
+                    throw new Error(
+                        "QR no válido"
+                    );
+
+                }
+
+
+                const piso =
+                    url.searchParams.get(
+                        "piso"
+                    );
+
+                const sector =
+                    url.searchParams.get(
+                        "sector"
+                    );
+
+
+                /*
+                 * Exigimos piso y sector.
+                 */
+
+                if (
+                    !piso ||
+                    !sector
+                ) {
+
+                    throw new Error(
+                        "El QR no contiene piso y sector."
+                    );
+
+                }
+
+
+                /*
+                 * Mostrar ubicación.
+                 */
+
+                scannerResult.style.display =
+                    "block";
+
+                scannerResult.textContent =
+                    "✅ QR detectado correctamente";
+
+
+                locationPreview.style.display =
+                    "block";
+
+                locationText.textContent =
+                    "Piso " +
+                    piso +
+                    " - Sector " +
+                    sector;
+
+
+                /*
+                 * Detener cámara.
+                 */
+
+                try {
+
+                    await scanner.stop();
+
+                } catch (error) {
+
+                    console.log(error);
+
+                }
+
+
+                /*
+                 * Redirigir al formulario.
+                 *
+                 * El piso y sector quedan
+                 * incluidos en la URL.
+                 */
+
+                const destino =
+                    "./index.html?piso=" +
+                    encodeURIComponent(piso) +
+                    "&sector=" +
+                    encodeURIComponent(sector);
+
+
+                setTimeout(
+                    function() {
+
+                        window.location.href =
+                            destino;
+
+                    },
+                    700
+                );
+
+
+            } catch (error) {
+
+                console.error(error);
+
+
+                alert(
+                    "❌ Este QR no contiene una ubicación válida.\n\n" +
+                    "El QR debe identificar un piso y un sector."
+                );
+
+
+                redirigiendo = false;
+
+            }
+
+        },
+
+
+        function(errorMessage) {
+
+            /*
+             * Los errores de lectura
+             * normales se ignoran.
+             */
+
+        }
+
+    )
+
+
+    .catch(function(error) {
+
+        console.error(error);
+
+
+        alert(
+            "No se pudo abrir la cámara.\n\n" +
+            "Debes permitir el acceso a la cámara."
+        );
+
+    });
+
+
+</script>
+
+
+</body>
+
+</html>

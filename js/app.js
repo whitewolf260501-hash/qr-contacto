@@ -1,15 +1,54 @@
 // ============================================================
 // REGISTRO DE VISITAS
-// CÁMARA + GPS + GOOGLE APPS SCRIPT
+// QR + PISO + SECTOR + SELFIE + GPS + GOOGLE APPS SCRIPT
 // ============================================================
 
-const piso =
-    new URLSearchParams(window.location.search).get("piso") || "No identificado";
 
-const pisoLabel = document.getElementById("pisoLabel");
+// ============================================================
+// UBICACIÓN DESDE EL QR
+// ============================================================
+
+const urlParams =
+    new URLSearchParams(
+        window.location.search
+    );
+
+
+const piso =
+    urlParams.get("piso") || "";
+
+
+const sector =
+    urlParams.get("sector") || "";
+
+
+// ============================================================
+// MOSTRAR UBICACIÓN
+// ============================================================
+
+const pisoLabel =
+    document.getElementById(
+        "pisoLabel"
+    );
+
 
 if (pisoLabel) {
-    pisoLabel.textContent = piso;
+
+    if (piso && sector) {
+
+        pisoLabel.textContent =
+            "Piso " +
+            piso +
+            " - Sector " +
+            sector;
+
+    } else {
+
+        pisoLabel.textContent =
+            "No identificado";
+
+    }
+
 }
 
 
@@ -28,244 +67,479 @@ let photoBlob = null;
 // ELEMENTOS
 // ============================================================
 
-const visitForm = document.getElementById("visitForm");
+const visitForm =
+    document.getElementById(
+        "visitForm"
+    );
+
 
 const openCameraBtn =
-    document.getElementById("openCameraBtn");
+    document.getElementById(
+        "openCameraBtn"
+    );
+
 
 const takePhotoBtn =
-    document.getElementById("takePhotoBtn");
+    document.getElementById(
+        "takePhotoBtn"
+    );
+
 
 const retakePhotoBtn =
-    document.getElementById("retakePhotoBtn");
+    document.getElementById(
+        "retakePhotoBtn"
+    );
+
 
 const cameraContainer =
-    document.getElementById("cameraContainer");
+    document.getElementById(
+        "cameraContainer"
+    );
+
 
 const camera =
-    document.getElementById("camera");
+    document.getElementById(
+        "camera"
+    );
+
 
 const canvas =
-    document.getElementById("canvas");
+    document.getElementById(
+        "canvas"
+    );
+
 
 const previewWrap =
-    document.getElementById("previewWrap");
+    document.getElementById(
+        "previewWrap"
+    );
+
 
 const preview =
-    document.getElementById("preview");
+    document.getElementById(
+        "preview"
+    );
+
 
 const locationBtn =
-    document.getElementById("locationBtn");
+    document.getElementById(
+        "locationBtn"
+    );
+
 
 const locationStatus =
-    document.getElementById("locationStatus");
+    document.getElementById(
+        "locationStatus"
+    );
+
 
 const sendBtn =
-    document.getElementById("sendBtn");
+    document.getElementById(
+        "sendBtn"
+    );
+
 
 const status =
-    document.getElementById("status");
+    document.getElementById(
+        "status"
+    );
+
+
+// ============================================================
+// GUARDAR PISO Y SECTOR EN CAMPOS OCULTOS
+// ============================================================
+
+const pisoInput =
+    document.getElementById(
+        "piso"
+    );
+
+
+const sectorInput =
+    document.getElementById(
+        "sector"
+    );
+
+
+if (pisoInput) {
+
+    pisoInput.value =
+        piso;
+
+}
+
+
+if (sectorInput) {
+
+    sectorInput.value =
+        sector;
+
+}
 
 
 // ============================================================
 // SELECCIÓN MANTENCIÓN / SEGURIDAD
 // ============================================================
 
-document.querySelectorAll(".staff").forEach(button => {
+document
+    .querySelectorAll(".staff")
+    .forEach(button => {
 
-    button.addEventListener("click", () => {
 
-        document.querySelectorAll(".staff").forEach(btn => {
-            btn.classList.remove("selected");
-        });
+        button.addEventListener(
+            "click",
+            () => {
 
-        button.classList.add("selected");
 
-        tipoSeleccionado =
-            button.dataset.tipo;
+                document
+                    .querySelectorAll(".staff")
+                    .forEach(btn => {
 
-        document.getElementById("tipo").value =
-            tipoSeleccionado;
+                        btn.classList.remove(
+                            "selected"
+                        );
+
+                    });
+
+
+                button.classList.add(
+                    "selected"
+                );
+
+
+                tipoSeleccionado =
+                    button.dataset.tipo;
+
+
+                const tipoInput =
+                    document.getElementById(
+                        "tipo"
+                    );
+
+
+                if (tipoInput) {
+
+                    tipoInput.value =
+                        tipoSeleccionado;
+
+                }
+
+            }
+        );
 
     });
 
-});
-
 
 // ============================================================
-// ABRIR CÁMARA
+// ABRIR CÁMARA FRONTAL
 // ============================================================
 
-openCameraBtn.addEventListener("click", async () => {
+if (openCameraBtn) {
 
-    try {
-
-        if (!navigator.mediaDevices ||
-            !navigator.mediaDevices.getUserMedia) {
-
-            alert(
-                "Tu navegador no permite utilizar la cámara directamente."
-            );
-
-            return;
-        }
-
-        cameraStream =
-            await navigator.mediaDevices.getUserMedia({
-                video: {
-                    facingMode: {
-                        ideal: "environment"
-                    },
-                    width: {
-                        ideal: 1280
-                    },
-                    height: {
-                        ideal: 720
-                    }
-                },
-                audio: false
-            });
-
-        camera.srcObject =
-            cameraStream;
-
-        cameraContainer.classList.remove("hidden");
-
-        openCameraBtn.classList.add("hidden");
-
-        previewWrap.classList.add("hidden");
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert(
-            "No fue posible abrir la cámara. " +
-            "Debes permitir el acceso a la cámara."
-        );
-
-    }
-
-});
+    openCameraBtn.addEventListener(
+        "click",
+        async () => {
 
 
-// ============================================================
-// TOMAR FOTOGRAFÍA
-// ============================================================
+            try {
 
-takePhotoBtn.addEventListener("click", () => {
 
-    if (!cameraStream) {
-        return;
-    }
+                if (
+                    !navigator.mediaDevices ||
+                    !navigator.mediaDevices.getUserMedia
+                ) {
 
-    const width =
-        camera.videoWidth;
+                    alert(
+                        "Tu navegador no permite utilizar la cámara directamente."
+                    );
 
-    const height =
-        camera.videoHeight;
+                    return;
 
-    if (!width || !height) {
+                }
 
-        alert(
-            "La cámara todavía no está lista. Intenta nuevamente."
-        );
 
-        return;
-    }
+                cameraStream =
+                    await navigator.mediaDevices.getUserMedia({
 
-    canvas.width = width;
-    canvas.height = height;
+                        video: {
 
-    const context =
-        canvas.getContext("2d");
+                            /*
+                             * FRONT CAMERA
+                             */
 
-    context.drawImage(
-        camera,
-        0,
-        0,
-        width,
-        height
-    );
+                            facingMode: {
+                                ideal: "user"
+                            },
 
-    canvas.toBlob(
-        blob => {
+                            width: {
+                                ideal: 1280
+                            },
 
-            if (!blob) {
+                            height: {
+                                ideal: 720
+                            }
+
+                        },
+
+                        audio: false
+
+                    });
+
+
+                camera.srcObject =
+                    cameraStream;
+
+
+                cameraContainer
+                    .classList
+                    .remove("hidden");
+
+
+                openCameraBtn
+                    .classList
+                    .add("hidden");
+
+
+                previewWrap
+                    .classList
+                    .add("hidden");
+
+
+            } catch (error) {
+
+
+                console.error(error);
+
 
                 alert(
-                    "No fue posible capturar la fotografía."
+                    "No fue posible abrir la cámara frontal.\n\n" +
+                    "Debes permitir el acceso a la cámara."
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// TOMAR SELFIE
+// ============================================================
+
+if (takePhotoBtn) {
+
+    takePhotoBtn.addEventListener(
+        "click",
+        () => {
+
+
+            if (!cameraStream) {
+
+                return;
+
+            }
+
+
+            const width =
+                camera.videoWidth;
+
+
+            const height =
+                camera.videoHeight;
+
+
+            if (!width || !height) {
+
+                alert(
+                    "La cámara todavía no está lista. Intenta nuevamente."
                 );
 
                 return;
+
             }
 
-            photoBlob = blob;
 
-            const imageURL =
-                URL.createObjectURL(blob);
+            canvas.width =
+                width;
 
-            preview.src =
-                imageURL;
 
-            previewWrap.classList.remove("hidden");
+            canvas.height =
+                height;
 
-            cameraContainer.classList.add("hidden");
 
-            stopCamera();
+            const context =
+                canvas.getContext(
+                    "2d"
+                );
 
-        },
-        "image/jpeg",
-        0.82
+
+            /*
+             * Espejar la selfie para que
+             * se vea como en la cámara frontal.
+             */
+
+            context.save();
+
+
+            context.translate(
+                width,
+                0
+            );
+
+
+            context.scale(
+                -1,
+                1
+            );
+
+
+            context.drawImage(
+                camera,
+                0,
+                0,
+                width,
+                height
+            );
+
+
+            context.restore();
+
+
+            canvas.toBlob(
+                blob => {
+
+
+                    if (!blob) {
+
+                        alert(
+                            "No fue posible capturar la selfie."
+                        );
+
+                        return;
+
+                    }
+
+
+                    photoBlob =
+                        blob;
+
+
+                    const imageURL =
+                        URL.createObjectURL(
+                            blob
+                        );
+
+
+                    preview.src =
+                        imageURL;
+
+
+                    previewWrap
+                        .classList
+                        .remove("hidden");
+
+
+                    cameraContainer
+                        .classList
+                        .add("hidden");
+
+
+                    stopCamera();
+
+
+                },
+
+                "image/jpeg",
+
+                0.82
+
+            );
+
+        }
     );
 
-});
+}
 
 
 // ============================================================
-// REPETIR FOTOGRAFÍA
+// REPETIR SELFIE
 // ============================================================
 
-retakePhotoBtn.addEventListener("click", async () => {
+if (retakePhotoBtn) {
 
-    photoBlob = null;
+    retakePhotoBtn.addEventListener(
+        "click",
+        async () => {
 
-    preview.src = "";
 
-    previewWrap.classList.add("hidden");
+            photoBlob =
+                null;
 
-    try {
 
-        cameraStream =
-            await navigator.mediaDevices.getUserMedia({
-                video: {
-                    facingMode: {
-                        ideal: "environment"
-                    },
-                    width: {
-                        ideal: 1280
-                    },
-                    height: {
-                        ideal: 720
-                    }
-                },
-                audio: false
-            });
+            preview.src =
+                "";
 
-        camera.srcObject =
-            cameraStream;
 
-        cameraContainer.classList.remove("hidden");
+            previewWrap
+                .classList
+                .add("hidden");
 
-    } catch (error) {
 
-        alert(
-            "No fue posible volver a abrir la cámara."
-        );
+            try {
 
-    }
 
-});
+                cameraStream =
+                    await navigator.mediaDevices
+                        .getUserMedia({
+
+                            video: {
+
+                                facingMode: {
+                                    ideal: "user"
+                                },
+
+                                width: {
+                                    ideal: 1280
+                                },
+
+                                height: {
+                                    ideal: 720
+                                }
+
+                            },
+
+                            audio: false
+
+                        });
+
+
+                camera.srcObject =
+                    cameraStream;
+
+
+                cameraContainer
+                    .classList
+                    .remove("hidden");
+
+
+            } catch (error) {
+
+
+                console.error(error);
+
+
+                alert(
+                    "No fue posible volver a abrir la cámara frontal."
+                );
+
+            }
+
+        }
+    );
+
+}
 
 
 // ============================================================
@@ -274,17 +548,27 @@ retakePhotoBtn.addEventListener("click", async () => {
 
 function stopCamera() {
 
+
     if (cameraStream) {
+
 
         cameraStream
             .getTracks()
-            .forEach(track => track.stop());
+            .forEach(track => {
 
-        cameraStream = null;
+                track.stop();
+
+            });
+
+
+        cameraStream =
+            null;
 
     }
 
-    camera.srcObject = null;
+
+    camera.srcObject =
+        null;
 
 }
 
@@ -293,68 +577,110 @@ function stopCamera() {
 // GPS
 // ============================================================
 
-locationBtn.addEventListener("click", obtenerUbicacion);
+if (locationBtn) {
+
+    locationBtn.addEventListener(
+        "click",
+        obtenerUbicacion
+    );
+
+}
+
 
 function obtenerUbicacion() {
 
+
     if (!navigator.geolocation) {
+
 
         locationStatus.textContent =
             "Este dispositivo no permite obtener ubicación.";
 
+
         return;
+
     }
+
 
     locationStatus.textContent =
         "Obteniendo ubicación...";
 
-    locationBtn.disabled = true;
+
+    locationBtn.disabled =
+        true;
+
 
     navigator.geolocation.getCurrentPosition(
 
         position => {
 
+
             const latitude =
                 position.coords.latitude;
+
 
             const longitude =
                 position.coords.longitude;
 
+
             const accuracy =
                 position.coords.accuracy;
 
-            document.getElementById("latitud").value =
+
+            document.getElementById(
+                "latitud"
+            ).value =
                 latitude;
 
-            document.getElementById("longitud").value =
+
+            document.getElementById(
+                "longitud"
+            ).value =
                 longitude;
 
-            document.getElementById("accuracy").value =
+
+            document.getElementById(
+                "accuracy"
+            ).value =
                 accuracy;
+
 
             locationStatus.textContent =
                 "✅ Ubicación registrada correctamente.";
 
+
             locationBtn.textContent =
                 "✅ Ubicación registrada";
 
+
         },
+
 
         error => {
 
+
             console.error(error);
+
 
             locationStatus.textContent =
                 "⚠️ No se pudo obtener la ubicación. Puedes intentar nuevamente.";
 
-            locationBtn.disabled = false;
+
+            locationBtn.disabled =
+                false;
+
 
         },
 
+
         {
+
             enableHighAccuracy: true,
+
             timeout: 15000,
+
             maximumAge: 0
+
         }
 
     );
@@ -366,213 +692,327 @@ function obtenerUbicacion() {
 // ENVÍO DEL FORMULARIO
 // ============================================================
 
-visitForm.addEventListener("submit", async event => {
+if (visitForm) {
 
-    event.preventDefault();
-
-    status.textContent = "";
-
-    // ------------------------------------------
-    // VALIDAR TIPO
-    // ------------------------------------------
-
-    if (!tipoSeleccionado) {
-
-        status.textContent =
-            "Selecciona Mantención o Seguridad.";
-
-        return;
-    }
+    visitForm.addEventListener(
+        "submit",
+        async event => {
 
 
-    // ------------------------------------------
-    // VALIDAR FOTO
-    // ------------------------------------------
-
-    if (!photoBlob) {
-
-        status.textContent =
-            "Debes tomar una fotografía antes de enviar el registro.";
-
-        return;
-    }
+            event.preventDefault();
 
 
-    // ------------------------------------------
-    // VALIDAR GPS
-    // ------------------------------------------
-
-    const latitud =
-        document.getElementById("latitud").value;
-
-    const longitud =
-        document.getElementById("longitud").value;
-
-    if (!latitud || !longitud) {
-
-        status.textContent =
-            "Debes registrar tu ubicación antes de enviar.";
-
-        return;
-    }
+            status.textContent =
+                "";
 
 
-    // ------------------------------------------
-    // BLOQUEAR BOTÓN
-    // ------------------------------------------
+            // ================================================
+            // VALIDAR PISO
+            // ================================================
 
-    sendBtn.disabled = true;
+            if (!piso || !sector) {
 
-    sendBtn.textContent =
-        "Enviando registro...";
+                status.textContent =
+                    "Debes ingresar mediante un QR válido de piso y sector.";
 
+                return;
 
-    try {
-
-        // --------------------------------------
-        // CONVERTIR FOTO A BASE64
-        // --------------------------------------
-
-        const base64 =
-            await blobToBase64(photoBlob);
-
-
-        // --------------------------------------
-        // DATOS
-        // --------------------------------------
-
-        const data =
-            new URLSearchParams();
-
-        data.append(
-            "piso",
-            piso
-        );
-
-        data.append(
-            "tipo",
-            tipoSeleccionado
-        );
-
-        data.append(
-            "nombre",
-            document.getElementById("nombre").value.trim()
-        );
-
-        data.append(
-            "correo",
-            document.getElementById("correo").value.trim()
-        );
-
-        data.append(
-            "telefono",
-            document.getElementById("telefono").value.trim()
-        );
-
-        data.append(
-            "mensaje",
-            document.getElementById("mensaje").value.trim()
-        );
-
-        data.append(
-            "fotoBase64",
-            base64
-        );
-
-        data.append(
-            "fotoMime",
-            "image/jpeg"
-        );
-
-        data.append(
-            "fotoNombre",
-            "foto_visita.jpg"
-        );
-
-        data.append(
-            "latitud",
-            latitud
-        );
-
-        data.append(
-            "longitud",
-            longitud
-        );
-
-        data.append(
-            "accuracy",
-            document.getElementById("accuracy").value
-        );
-
-
-        // --------------------------------------
-        // ENVÍO A GOOGLE APPS SCRIPT
-        // --------------------------------------
-
-        await fetch(
-            APPS_SCRIPT_URL,
-            {
-                method: "POST",
-                mode: "no-cors",
-                body: data
             }
-        );
 
 
-        // --------------------------------------
-        // ÉXITO
-        // --------------------------------------
+            // ================================================
+            // VALIDAR TIPO
+            // ================================================
 
-        window.location.href =
-            "./gracias.html";
+            if (!tipoSeleccionado) {
+
+                status.textContent =
+                    "Selecciona Mantención o Seguridad.";
+
+                return;
+
+            }
 
 
-    } catch (error) {
+            // ================================================
+            // VALIDAR FOTO
+            // ================================================
 
-        console.error(error);
+            if (!photoBlob) {
 
-        status.textContent =
-            "No fue posible enviar el registro.";
+                status.textContent =
+                    "Debes tomar una selfie antes de enviar el registro.";
 
-        sendBtn.disabled = false;
+                return;
 
-        sendBtn.textContent =
-            "Enviar registro";
+            }
 
-    }
 
-});
+            // ================================================
+            // VALIDAR GPS
+            // ================================================
+
+            const latitud =
+                document.getElementById(
+                    "latitud"
+                ).value;
+
+
+            const longitud =
+                document.getElementById(
+                    "longitud"
+                ).value;
+
+
+            if (
+                !latitud ||
+                !longitud
+            ) {
+
+                status.textContent =
+                    "Debes registrar tu ubicación antes de enviar.";
+
+                return;
+
+            }
+
+
+            // ================================================
+            // BLOQUEAR BOTÓN
+            // ================================================
+
+            sendBtn.disabled =
+                true;
+
+
+            sendBtn.textContent =
+                "Enviando registro...";
+
+
+            try {
+
+
+                // ============================================
+                // FOTO → BASE64
+                // ============================================
+
+                const base64 =
+                    await blobToBase64(
+                        photoBlob
+                    );
+
+
+                // ============================================
+                // DATOS
+                // ============================================
+
+                const data =
+                    new URLSearchParams();
+
+
+                data.append(
+                    "piso",
+                    piso
+                );
+
+
+                data.append(
+                    "sector",
+                    sector
+                );
+
+
+                data.append(
+                    "tipo",
+                    tipoSeleccionado
+                );
+
+
+                data.append(
+                    "nombre",
+                    document
+                        .getElementById(
+                            "nombre"
+                        )
+                        .value
+                        .trim()
+                );
+
+
+                data.append(
+                    "correo",
+                    document
+                        .getElementById(
+                            "correo"
+                        )
+                        .value
+                        .trim()
+                );
+
+
+                data.append(
+                    "telefono",
+                    document
+                        .getElementById(
+                            "telefono"
+                        )
+                        .value
+                        .trim()
+                );
+
+
+                data.append(
+                    "mensaje",
+                    document
+                        .getElementById(
+                            "mensaje"
+                        )
+                        .value
+                        .trim()
+                );
+
+
+                data.append(
+                    "fotoBase64",
+                    base64
+                );
+
+
+                data.append(
+                    "fotoMime",
+                    "image/jpeg"
+                );
+
+
+                data.append(
+                    "fotoNombre",
+                    "selfie_visita.jpg"
+                );
+
+
+                data.append(
+                    "latitud",
+                    latitud
+                );
+
+
+                data.append(
+                    "longitud",
+                    longitud
+                );
+
+
+                data.append(
+                    "accuracy",
+                    document
+                        .getElementById(
+                            "accuracy"
+                        )
+                        .value
+                );
+
+
+                // ============================================
+                // GOOGLE APPS SCRIPT
+                // ============================================
+
+                await fetch(
+
+                    APPS_SCRIPT_URL,
+
+                    {
+
+                        method: "POST",
+
+                        mode: "no-cors",
+
+                        body: data
+
+                    }
+
+                );
+
+
+                // ============================================
+                // ÉXITO
+                // ============================================
+
+                window.location.href =
+                    "./gracias.html";
+
+
+            } catch (error) {
+
+
+                console.error(error);
+
+
+                status.textContent =
+                    "No fue posible enviar el registro.";
+
+
+                sendBtn.disabled =
+                    false;
+
+
+                sendBtn.textContent =
+                    "📤 Enviar registro";
+
+            }
+
+        }
+    );
+
+}
 
 
 // ============================================================
 // BLOB → BASE64
 // ============================================================
 
-function blobToBase64(blob) {
+function blobToBase64(
+    blob
+) {
 
-    return new Promise((resolve, reject) => {
 
-        const reader =
-            new FileReader();
+    return new Promise(
+        (resolve, reject) => {
 
-        reader.onloadend = () => {
 
-            const result =
-                reader.result;
+            const reader =
+                new FileReader();
 
-            const base64 =
-                result.split(",")[1];
 
-            resolve(base64);
+            reader.onloadend =
+                () => {
 
-        };
 
-        reader.onerror =
-            reject;
+                    const result =
+                        reader.result;
 
-        reader.readAsDataURL(blob);
 
-    });
+                    const base64 =
+                        result
+                            .split(",")[1];
+
+
+                    resolve(
+                        base64
+                    );
+
+                };
+
+
+            reader.onerror =
+                reject;
+
+
+            reader.readAsDataURL(
+                blob
+            );
+
+        }
+    );
 
 }
 
