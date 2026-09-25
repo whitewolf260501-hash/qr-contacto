@@ -948,7 +948,8 @@ if (visitForm) {
 
 
                 status.textContent =
-                    "No fue posible enviar el registro.";
+                    "No fue posible enviar el registro. Error: " +
+                    (error && error.message ? error.message : String(error));
 
 
                 sendBtn.disabled =

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -22,6 +22,7 @@
         href="./css/styles.css"
     >
 
+    <link rel="manifest" href="./manifest.webmanifest">
 </head>
 
 
@@ -32,6 +33,10 @@
 
     <section class="card">
 
+
+        <!-- ==========================================
+             ENCABEZADO
+        =========================================== -->
 
         <div class="brand">
             REGISTRO DE VISITA
@@ -48,13 +53,26 @@
         </p>
 
 
-        <a href="./escanear-qr.html" class="scanner-button">Escanear QR del piso y sector</a>
+        <!-- ==========================================
+             BOTÓN ESCANEAR QR
+        =========================================== -->
 
+        <a
+            href="./escanear-qr.html"
+            class="scanner-button"
+        >
+            📱 Escanear QR del piso y sector
+        </a>
+
+
+        <!-- ==========================================
+             UBICACIÓN DETECTADA
+        =========================================== -->
 
         <div class="floor-box">
 
             <span>
-                Ubicacion detectada
+                Ubicación detectada
             </span>
 
             <strong id="pisoLabel">
@@ -64,8 +82,16 @@
         </div>
 
 
+        <!-- ==========================================
+             FORMULARIO
+        =========================================== -->
+
         <form id="visitForm">
 
+
+            <!-- ======================================
+                 NOMBRE
+            ======================================= -->
 
             <label for="nombre">
                 Nombre
@@ -80,6 +106,43 @@
             >
 
 
+            <!-- ======================================
+                 CORREO
+            ======================================= -->
+
+            <label for="correo">
+                Correo
+            </label>
+
+            <input
+                id="correo"
+                type="email"
+                required
+                autocomplete="email"
+                placeholder="correo@ejemplo.com"
+            >
+
+
+            <!-- ======================================
+                 TELÉFONO
+            ======================================= -->
+
+            <label for="telefono">
+                Teléfono
+            </label>
+
+            <input
+                id="telefono"
+                type="tel"
+                autocomplete="tel"
+                placeholder="+56 9..."
+            >
+
+
+            <!-- ======================================
+                 MENSAJE
+            ======================================= -->
+
             <label for="mensaje">
                 Mensaje
             </label>
@@ -92,33 +155,41 @@
             ></textarea>
 
 
+            <!-- ==========================================
+                 CÁMARA / SELFIE
+            =========================================== -->
+
             <div class="camera-section">
 
 
                 <h3>
-                    Selfie obligatoria
+                    🤳 Selfie obligatoria
                 </h3>
 
 
                 <p class="hint">
 
-                    Debes tomar una fotografia ahora para
+                    Debes tomar una fotografía ahora para
                     registrar la visita.
 
-                    La fotografia se tomara directamente
-                    con la camara frontal del telefono.
+                    La fotografía se tomará directamente
+                    con la cámara frontal del teléfono.
 
                 </p>
 
+
+                <!-- ABRIR CÁMARA -->
 
                 <button
                     type="button"
                     id="openCameraBtn"
                     class="camera-button"
                 >
-                    Abrir camara frontal
+                    🤳 Abrir cámara frontal
                 </button>
 
+
+                <!-- CONTENEDOR DE CÁMARA -->
 
                 <div
                     id="cameraContainer"
@@ -138,18 +209,22 @@
                         id="takePhotoBtn"
                         class="take-photo-button"
                     >
-                        Tomar selfie
+                        📸 Tomar selfie
                     </button>
 
 
                 </div>
 
 
+                <!-- CANVAS OCULTO -->
+
                 <canvas
                     id="canvas"
                     class="hidden"
                 ></canvas>
 
+
+                <!-- PREVISUALIZACIÓN -->
 
                 <div
                     id="previewWrap"
@@ -158,7 +233,7 @@
 
 
                     <p class="photo-ok">
-                        Selfie capturada correctamente
+                        ✅ Selfie capturada correctamente
                     </p>
 
 
@@ -173,7 +248,7 @@
                         id="retakePhotoBtn"
                         class="retake-button"
                     >
-                        Tomar otra selfie
+                        🔄 Tomar otra selfie
                     </button>
 
 
@@ -183,8 +258,12 @@
             </div>
 
 
+            <!-- ==========================================
+                 TIPO DE VISITA
+            =========================================== -->
+
             <h3>
-                Quien realizo la visita?
+                ¿Quién realizó la visita?
             </h3>
 
 
@@ -194,9 +273,9 @@
                 <button
                     type="button"
                     class="staff"
-                    data-tipo="Mantencion"
+                    data-tipo="Mantención"
                 >
-                    Mantencion
+                    🛠️ Mantención
                 </button>
 
 
@@ -205,26 +284,30 @@
                     class="staff"
                     data-tipo="Seguridad"
                 >
-                    Seguridad
+                    🛡️ Seguridad
                 </button>
 
 
             </div>
 
 
+            <!-- ==========================================
+                 UBICACIÓN GPS
+            =========================================== -->
+
             <div class="location-box">
 
 
                 <strong>
-                    Verificacion de ubicacion
+                    📍 Verificación de ubicación
                 </strong>
 
 
                 <p id="locationStatus">
 
-                    Se solicitara tu ubicacion para
+                    Se solicitará tu ubicación para
                     registrar el lugar desde donde se
-                    realizo la visita.
+                    realizó la visita.
 
                 </p>
 
@@ -234,11 +317,16 @@
                     id="locationBtn"
                     class="location-button"
                 >
-                    Obtener ubicacion
+                    📍 Obtener ubicación
                 </button>
 
 
             </div>
+
+
+            <!-- ==========================================
+                 CAMPOS OCULTOS
+            =========================================== -->
 
 
             <input
@@ -269,12 +357,20 @@
             >
 
 
+            <!-- ==========================================
+                 PISO
+            =========================================== -->
+
             <input
                 type="hidden"
                 id="piso"
                 name="piso"
             >
 
+
+            <!-- ==========================================
+                 SECTOR
+            =========================================== -->
 
             <input
                 type="hidden"
@@ -283,14 +379,22 @@
             >
 
 
+            <!-- ==========================================
+                 BOTÓN ENVIAR
+            =========================================== -->
+
             <button
                 id="sendBtn"
                 class="send"
                 type="submit"
             >
-                Enviar registro
+                📤 Enviar registro
             </button>
 
+
+            <!-- ==========================================
+                 ESTADO
+            =========================================== -->
 
             <div
                 id="status"
@@ -308,11 +412,16 @@
 </main>
 
 
+<!-- ==========================================
+     JAVASCRIPT
+=========================================== -->
+
 <script src="./js/config.js"></script>
 
 <script src="./js/app.js"></script>
 
 
+    <script src="./js/mobile.js"></script>
 </body>
 
 </html>
