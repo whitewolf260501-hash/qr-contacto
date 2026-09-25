@@ -840,28 +840,6 @@ if (visitForm) {
 
 
                 data.append(
-                    "correo",
-                    document
-                        .getElementById(
-                            "correo"
-                        )
-                        .value
-                        .trim()
-                );
-
-
-                data.append(
-                    "telefono",
-                    document
-                        .getElementById(
-                            "telefono"
-                        )
-                        .value
-                        .trim()
-                );
-
-
-                data.append(
                     "mensaje",
                     document
                         .getElementById(

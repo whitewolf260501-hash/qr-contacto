@@ -25,11 +25,9 @@ function doPost(e) {
     const piso = clean_(p.piso);
     const tipo = clean_(p.tipo);
     const nombre = clean_(p.nombre);
-    const correo = clean_(p.correo);
-    const telefono = clean_(p.telefono);
     const mensaje = clean_(p.mensaje);
 
-    if (!piso || !tipo || !nombre || !correo || !p.fotoBase64) {
+    if (!piso || !tipo || !nombre || !p.fotoBase64) {
       return json_({ok:false, error:"Faltan datos obligatorios."});
     }
 
@@ -57,8 +55,8 @@ function doPost(e) {
     if (!sheet) {
       sheet = ss.insertSheet(CONFIG.SHEET_NAME);
       sheet.appendRow([
-        "Fecha y hora","Piso","Personal","Nombre","Correo",
-        "Teléfono","Mensaje","Archivo","ID archivo"
+        "Fecha y hora","Piso","Personal","Nombre",
+        "Mensaje","Archivo","ID archivo"
       ]);
     }
 
@@ -67,8 +65,6 @@ function doPost(e) {
       piso,
       tipo,
       nombre,
-      correo,
-      telefono,
       mensaje,
       file.getUrl(),
       file.getId()
@@ -83,8 +79,6 @@ function doPost(e) {
       "Piso: " + piso + "\n" +
       "Personal: " + tipo + "\n" +
       "Nombre: " + nombre + "\n" +
-      "Correo: " + correo + "\n" +
-      "Teléfono: " + telefono + "\n" +
       "Fecha: " + Utilities.formatDate(ahora, Session.getScriptTimeZone(), "dd/MM/yyyy") + "\n" +
       "Hora: " + Utilities.formatDate(ahora, Session.getScriptTimeZone(), "HH:mm:ss") + "\n\n" +
       "Mensaje:\n" + mensaje + "\n\n" +
@@ -95,8 +89,7 @@ function doPost(e) {
       subject: asunto,
       body: cuerpo,
       attachments: [file.getBlob()],
-      name: "Registro de visitas del edificio",
-      replyTo: correo
+      name: "Registro de visitas del edificio"
     });
 
     return json_({ok:true, id:file.getId()});
